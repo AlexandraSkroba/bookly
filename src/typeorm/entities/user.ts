@@ -7,14 +7,14 @@ export class User extends UserDto {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 40, unique: true })
+  @Column({ type: 'varchar', length: 320, unique: true })
   email: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', length: 20 })
   password: string;
 
   @Column({ type: 'varchar', length: 15 })
-  userName: string;
+  username: string;
 
   @BeforeInsert()
   validateAndSetDefaultUserName() {
@@ -22,12 +22,12 @@ export class User extends UserDto {
       throw new BadRequestException('Invalid email format');
     }
 
-    if (!this.userName) {
-      this.userName = this.email.split('@')[0];
+    if (!this.username) {
+      this.username = this.email.split('@')[0];
     }
   }
 
-  // Метод для проверки корректности email
+  // Email correctness test
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     return emailRegex.test(email);

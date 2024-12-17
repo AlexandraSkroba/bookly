@@ -1,5 +1,5 @@
 export class UserDto {
   email: string;
-  userName: string;
+  username: string;
   avatar: string;
 }
