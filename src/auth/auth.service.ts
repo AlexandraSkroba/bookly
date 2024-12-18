@@ -1,23 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserData } from 'src/user/interface/create-user.interface';
-import { UserRepository } from 'src/user/user.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from 'src/user/dtos/create-user.dto';
+import { UserEntity } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(private userService: UserService) {}
 
-  async registerUser(createUserData: CreateUserData) {
-    const existingUser = await this.userRepository.findByEmail(
-      createUserData.email,
-    );
-    if (existingUser) {
-      throw new Error('User with this email already exists');
+  async signUpUser(createUserDto: CreateUserDto) {
+    const newUser = await this.userService.create(createUserDto);
+
+    if (newUser) {
+      // Schedule confirmation email and return successful response here
     }
-
-    await this.userRepository.createAndSave(createUserData);
-
-    return {
-      message: 'User registered successfully. Please confirm your email.',
-    };
   }
 }

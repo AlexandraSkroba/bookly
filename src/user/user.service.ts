@@ -1,17 +1,28 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserData } from './interface/create-user.interface';
-import { UserRepository } from './user.repository';
+import { Injectable, ConflictException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+  ) {}
 
-  async createUser(createUserData: CreateUserData) {
-    const newUser = await this.userRepository.createAndSave(createUserData);
-    return newUser;
-  }
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    const existingUser = await this.usersRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+    if (existingUser) {
+      throw new ConflictException('Email has already been taken');
+    } else {
+      const user = this.usersRepository.create({
+        ...createUserDto,
+      });
 
-  async findByEmail(email: string) {
-    return this.userRepository.findByEmail(email);
+      return await this.usersRepository.save(user);
+    }
   }
 }

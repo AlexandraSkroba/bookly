@@ -17,6 +17,7 @@ class IsStrongPasswordConstraint implements ValidatorConstraintInterface {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     return (
+      password &&
       password.length >= minLength &&
       password.length <= maxLength &&
       hasUpperCase &&
