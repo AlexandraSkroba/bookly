@@ -22,7 +22,7 @@ export class UserEntity extends BasicEntity {
   @BeforeInsert()
   setUsername() {
     if (!this.username) {
-      this.username = this.email.split('@')[0];
+      this.username = this.email.split('@')[0].slice(0, 15);
     }
   }
 }
