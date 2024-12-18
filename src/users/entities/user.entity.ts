@@ -18,7 +18,7 @@ export class UserEntity extends BasicEntity {
   @Column({ default: false })
   isConfirmed: boolean;
 
-  @Column({ nullable: true})
+  @Column({ nullable: true })
   confirmationToken: string;
 
   @BeforeInsert()
