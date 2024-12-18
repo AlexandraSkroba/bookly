@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Get, Inject, Param, NotFoundException } from '@nestjs/common';
 import { Controller, Post, Body } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
@@ -10,5 +10,14 @@ export class AuthController {
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto) {
     return this.authService.signUpUser(createUserDto);
+  }
+
+  @Get('confirm/:token')
+  async confirmEmail(@Param('token') token: string) {
+    if (token) {
+      return this.authService.confirmUser(token)
+    } else {
+      throw new NotFoundException('No token provided')
+    }
   }
 }

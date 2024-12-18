@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable  } from '@nestjs/common';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
@@ -24,5 +24,11 @@ export class AuthService {
 
     await this.emailQueue.add('confirmation', data, { delay: 0 });
     return 'You signed up successfully! Now please confirm your email';
+  }
+
+  async confirmUser(token: string) {
+    await this.UsersService.confirmUser(token); 
+    
+    return 'Your accoutn has been successfully confirmed. Please log in using your credentials'
   }
 }
