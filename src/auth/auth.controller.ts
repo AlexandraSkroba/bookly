@@ -14,10 +14,8 @@ export class AuthController {
 
   @Get('confirm/:token')
   async confirmEmail(@Param('token') token: string) {
-    if (token) {
-      return this.authService.confirmUser(token)
-    } else {
-      throw new NotFoundException('No token provided')
-    }
+    if (!token) { throw new NotFoundException('No token provided'); }
+
+    return this.authService.confirmUser(token);
   }
 }

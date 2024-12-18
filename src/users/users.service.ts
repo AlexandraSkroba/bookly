@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -28,14 +32,16 @@ export class UsersService {
   }
 
   async confirmUser(token: string) {
-    const user = await this.usersRepository.findOneBy({ confirmationToken: token });
+    const user = await this.usersRepository.findOneBy({
+      confirmationToken: token,
+    });
 
     if (!user) {
-      throw new NotFoundException('Wrong confirmation token provided')
+      throw new NotFoundException('Wrong confirmation token provided');
     } else if (user.isConfirmed) {
-      throw new ConflictException('Account is already confirmed')
+      throw new ConflictException('Account is already confirmed');
     } else {
-      return await this.usersRepository.update(user.id, { isConfirmed: true})
+      return await this.usersRepository.update(user.id, { isConfirmed: true });
     }
   }
 }
