@@ -5,7 +5,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
@@ -15,6 +15,7 @@ export class UserService {
     const existingUser = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
+
     if (existingUser) {
       throw new ConflictException('Email has already been taken');
     } else {
