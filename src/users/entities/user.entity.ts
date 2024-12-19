@@ -1,7 +1,9 @@
 import * as bcrypt from 'bcrypt';
 import { BasicEntity } from '../../database/entities/basic.entity';
-import { Column, Entity, Index, BeforeInsert } from 'typeorm';
+import { Column, Entity, Index, BeforeInsert, OneToMany } from 'typeorm';
 import { v4 } from 'uuid';
+import { BookEntity } from 'src/books/entities/book.entity';
+import { Exclude, classToPlain } from 'class-transformer';
 
 @Entity('users')
 export class UserEntity extends BasicEntity {
@@ -13,13 +15,19 @@ export class UserEntity extends BasicEntity {
   username: string;
 
   @Column({ type: 'varchar' })
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @Column({ default: false })
+  @Exclude({ toPlainOnly: true })
   isConfirmed: boolean;
 
   @Column({ nullable: true })
+  @Exclude({ toPlainOnly: true })
   confirmationToken: string;
+
+  @OneToMany(() => BookEntity, (book) => book.user)
+  books: BookEntity[];
 
   @BeforeInsert()
   async encryptPassword() {
@@ -36,5 +44,9 @@ export class UserEntity extends BasicEntity {
     if (!this.username) {
       this.username = this.email.split('@')[0].slice(0, 15);
     }
+  }
+
+  toJSON() {
+    return classToPlain(this);
   }
 }

@@ -12,6 +12,7 @@ import { MailModule } from './mail/mail.module';
 import { AppController } from './app.controller';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { BooksModule } from './books/books.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { JwtModule } from '@nestjs/jwt';
     MailModule,
     UsersModule,
     AuthModule,
+    BooksModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST || 'localhost',
