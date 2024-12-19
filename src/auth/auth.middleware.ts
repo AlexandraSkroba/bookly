@@ -42,5 +42,6 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     next();
+    Session.currentUser = undefined;
   }
 }
