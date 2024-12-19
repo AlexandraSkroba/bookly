@@ -1,6 +1,7 @@
 import {
   Injectable,
   NestMiddleware,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
@@ -8,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Request, Response, NextFunction } from 'express';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Session } from './auth.session';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
@@ -30,9 +30,10 @@ export class AuthMiddleware implements NestMiddleware {
       const payload = await this.jwtService.verify(token, {
         secret: process.env.SECRET,
       });
-      Session.currentUser = await this.usersRepository.findOne({
+      const user = await this.usersRepository.findOne({
         where: { id: payload.sub },
       });
+      if (!user) { throw new NotFoundException('User Not Found') }
     } catch (e) {
       if (e instanceof TokenExpiredError) {
         throw new UnauthorizedException('Revoked token');
@@ -42,6 +43,5 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     next();
-    Session.currentUser = undefined;
   }
 }
