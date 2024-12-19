@@ -6,19 +6,37 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import { BookDto } from './dtos/book.dto';
 import { BooksService } from './books.service';
 import { Request } from 'express';
+import { FilterBooksDto } from './dtos/filter-books.dto';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Get()
-  async index() {
-    return await this.booksService.findAll();
+  async index(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    return await this.booksService.findAll(parseInt(page), parseInt(limit));
+  }
+
+  @Post('search')
+  async search(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+    @Body() filterParams: FilterBooksDto,
+  ) {
+    return await this.booksService.search(
+      filterParams,
+      parseInt(page),
+      parseInt(limit),
+    );
   }
 
   @Post()
