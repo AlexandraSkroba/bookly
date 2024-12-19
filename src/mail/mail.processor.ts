@@ -17,7 +17,6 @@ export class EmailProcessor {
 
   @Process('confirmation')
   async sendConfirmationEmail(job: Job<MailInterface>) {
-    console.log('THIS IS PROCESSED');
     const { data } = job;
 
     await this.mailService.sendMail({
