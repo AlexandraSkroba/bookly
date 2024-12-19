@@ -1,11 +1,12 @@
 import {
+  Body,
+  Controller,
   Get,
   Inject,
-  Param,
   NotFoundException,
-  Redirect,
+  Param,
+  Post,
 } from '@nestjs/common';
-import { Controller, Post, Body } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
@@ -13,6 +14,12 @@ import { SignInDto } from './dtos/sign-in.dto';
 @Controller('auth')
 export class AuthController {
   constructor(@Inject(AuthService) private authService: AuthService) {}
+
+  @Post('/')
+  async signIn(@Body() credentials: SignInDto) {
+    const token = this.authService.authorizeUser(credentials);
+    return token;
+  }
 
   @Post('signup')
   async signUp(@Body() createUserDto: CreateUserDto) {
@@ -26,11 +33,5 @@ export class AuthController {
     }
 
     return this.authService.confirmUser(token);
-  }
-
-  @Post('signin')
-  async signIn(@Body() credentials: SignInDto) {
-    const token = this.authService.authorizeUser(credentials);
-    return token;
   }
 }
