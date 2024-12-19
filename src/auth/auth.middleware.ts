@@ -33,7 +33,10 @@ export class AuthMiddleware implements NestMiddleware {
       const user = await this.usersRepository.findOne({
         where: { id: payload.sub },
       });
-      if (!user) { throw new NotFoundException('User Not Found') }
+      if (!user) {
+        throw new NotFoundException('User Not Found');
+      }
+      req.currentUser = user;
     } catch (e) {
       if (e instanceof TokenExpiredError) {
         throw new UnauthorizedException('Revoked token');
