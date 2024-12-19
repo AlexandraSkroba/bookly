@@ -1,12 +1,15 @@
+import { compare } from 'bcrypt';
 import {
   Injectable,
   ConflictException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { SignInDto } from 'src/auth/dtos/sign-in.dto';
 
 @Injectable()
 export class UsersService {
@@ -43,5 +46,23 @@ export class UsersService {
     } else {
       return await this.usersRepository.update(user.id, { isConfirmed: true });
     }
+  }
+
+  async authenticate(credentials: SignInDto) {
+    const user = await this.usersRepository.findOneBy({
+      isConfirmed: true,
+      email: credentials.email,
+    });
+    if (!user) {
+      throw new NotFoundException('Email is incorrect');
+    }
+
+    compare(credentials.password, user.password, (_err, result) => {
+      if (!result) {
+        throw new UnauthorizedException('Provided bad credentials');
+      }
+    });
+
+    return user;
   }
 }
