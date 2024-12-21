@@ -4,6 +4,7 @@ import { Column, Entity, Index, BeforeInsert, OneToMany } from 'typeorm';
 import { v4 } from 'uuid';
 import { BookEntity } from 'src/books/entities/book.entity';
 import { Exclude, classToPlain } from 'class-transformer';
+import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
 
 @Entity('users')
 export class UserEntity extends BasicEntity {
@@ -26,8 +27,14 @@ export class UserEntity extends BasicEntity {
   @Exclude({ toPlainOnly: true })
   confirmationToken: string;
 
-  @OneToMany(() => BookEntity, (book) => book.user)
+  @OneToMany(() => BookEntity, (book) => book.owner)
   books: BookEntity[];
+
+  @OneToMany(() => ExchangeEntity, (exchange) => exchange.from)
+  outcomingExchanges: ExchangeEntity[];
+
+  @OneToMany(() => ExchangeEntity, (exchange) => exchange.to)
+  incomingExchanges: ExchangeEntity[];
 
   @BeforeInsert()
   async encryptPassword() {
