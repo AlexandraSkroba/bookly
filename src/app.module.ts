@@ -1,8 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -13,6 +9,7 @@ import { AppController } from './app.controller';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { BooksModule } from './books/books.module';
+import { ExchangesModule } from './exchanges/exchanges.module';
 
 @Module({
   imports: [
@@ -22,6 +19,7 @@ import { BooksModule } from './books/books.module';
     UsersModule,
     AuthModule,
     BooksModule,
+    ExchangesModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST || 'localhost',

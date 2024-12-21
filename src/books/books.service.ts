@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BookEntity } from './entities/book.entity';
+import { BookEntity, BookExchangeState } from './entities/book.entity';
 import { EntityManager, Filter, Repository } from 'typeorm';
 import { BookDto } from './dtos/book.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
@@ -22,7 +22,7 @@ export class BooksService {
   async findOne(bookId: number) {
     const book = await this.booksRepository.findOne({
       where: { id: bookId },
-      relations: ['user'],
+      relations: ['owner'],
     });
     if (!book) {
       throw new NotFoundException();
@@ -37,7 +37,7 @@ export class BooksService {
     const books = await this.booksRepository.find({
       take: limit,
       skip: (page - 1) * limit,
-      relations: ['user'],
+      relations: ['owner'],
     });
     const total = books.length;
     return { books, total };
@@ -56,16 +56,16 @@ export class BooksService {
 
   async create(bookParams: BookDto, currentUser: UserEntity) {
     const newBook = this.booksRepository.create({
-      user: currentUser,
+      owner: currentUser,
       ...bookParams,
     });
 
     return await this.booksRepository.save(newBook);
   }
 
-  async update(bookId: number, bookParams: BookDto, user: UserEntity) {
+  async update(bookId: number, bookParams: BookDto, owner: UserEntity) {
     const book = await this.booksRepository.findOne({
-      where: { id: bookId, user: { id: user.id } },
+      where: { id: bookId, owner: { id: owner.id } },
     });
     if (!book) {
       throw new NotFoundException();
@@ -82,11 +82,19 @@ export class BooksService {
 
   async delete(bookId: number, user: UserEntity) {
     const book = await this.findOne(bookId);
-    if (book.user.id !== user.id) {
+    if (book.owner.id !== user.id) {
       throw new ForbiddenException();
     }
 
-    this.booksRepository.delete({ id: bookId, user: { id: user.id } });
+    this.booksRepository.delete({ id: bookId, owner: { id: user.id } });
+  }
+
+  async changeOwner(bookId: number, newOwner: UserEntity) {
+    return await this.booksRepository.update(bookId, { owner: newOwner })
+  }
+
+  async changeState(bookId: number, exchangeState: BookExchangeState) {
+    return await this.booksRepository.update(bookId, { exchangeState })
   }
 
   private formSQL(filters: FilterBooksDto) {
