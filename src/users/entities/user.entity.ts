@@ -31,6 +31,9 @@ export class UserEntity extends BasicEntity {
   @Exclude({ toPlainOnly: true })
   resetPasswordToken: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  avatar: string;
+
   @OneToMany(() => BookEntity, (book) => book.owner)
   books: BookEntity[];
 

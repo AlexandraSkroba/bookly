@@ -115,4 +115,14 @@ export class UsersService {
       resetPasswordToken: null,
     });
   }
+
+  async uploadAvatar(currentUser: UserEntity, file: Express.Multer.File) {
+    await this.usersRepository.update(currentUser.id, {
+      avatar: file.filename,
+    });
+
+    return {
+      url: file.filename,
+    };
+  }
 }
