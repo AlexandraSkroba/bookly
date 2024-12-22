@@ -4,6 +4,7 @@ import {
   Process,
   OnQueueActive,
   OnQueueCompleted,
+  OnQueueFailed,
 } from '@nestjs/bull';
 import { Job } from 'bull';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -27,6 +28,18 @@ export class EmailProcessor {
     });
   }
 
+  @Process('reset-password')
+  async sendPasswordResetEmail(job: Job<MailInterface>) {
+    const { data } = job;
+
+    await this.mailService.sendMail({
+      to: data.to,
+      subject: data.subject,
+      template: 'reset-password',
+      context: data.context,
+    });
+  }
+
   @OnQueueActive()
   onActive(job: Job) {
     this.logger.log(`Job ${job.id} is now active`);
@@ -35,5 +48,10 @@ export class EmailProcessor {
   @OnQueueCompleted()
   onCompleted(job: Job) {
     this.logger.log(`Job ${job.id} has been completed`);
+  }
+
+  @OnQueueFailed()
+  onError(job: Job, error: Error) {
+    this.logger.log(`Job ${job.id} failed. Error: ${error}`);
   }
 }

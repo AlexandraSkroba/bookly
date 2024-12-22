@@ -10,16 +10,28 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { SignInDto } from 'src/auth/dtos/sign-in.dto';
+import { NewPasswordDto } from 'src/auth/dtos/new-password.dto';
 
 @Injectable()
 export class UsersService {
+  private confirmationResult: Boolean;
+
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
   ) {}
 
+  async findOne(params: Object) {
+    const user = await this.usersRepository.findOne(params);
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user;
+  }
+
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
-    const existingUser = await this.usersRepository.findOne({
+    const existingUser = await this.findOne({
       where: { email: createUserDto.email },
     });
 
@@ -34,10 +46,12 @@ export class UsersService {
     }
   }
 
-  async confirmUser(token: string) {
-    const user = await this.usersRepository.findOneBy({
-      confirmationToken: token,
-    });
+  async update(userId, params) {
+    return await this.usersRepository.update(userId, params);
+  }
+
+  async confirmUser(confirmationToken: string) {
+    const user = await this.findOne({ where: { confirmationToken } });
 
     if (!user) {
       throw new NotFoundException('Wrong confirmation token provided');
@@ -49,20 +63,56 @@ export class UsersService {
   }
 
   async authenticate(credentials: SignInDto) {
-    const user = await this.usersRepository.findOneBy({
-      isConfirmed: true,
-      email: credentials.email,
+    const user = await this.findOne({
+      where: {
+        isConfirmed: true,
+        email: credentials.email,
+      },
     });
     if (!user) {
       throw new NotFoundException('Email is incorrect');
     }
 
-    compare(credentials.password, user.password, (_err, result) => {
-      if (!result) {
-        throw new UnauthorizedException('Provided bad credentials');
-      }
+    if (await compare(credentials.password, user.password)) {
+      return user;
+    }
+
+    throw new UnauthorizedException('Provided bad credentials');
+  }
+
+  async resetPassword(token: string) {
+    const user = await this.findOne({
+      where: { resetPasswordToken: token, isConfirmed: true },
+    });
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    await this.usersRepository.update(user.id, { password: '' });
+    return user;
+  }
+
+  async setNewPassword(newPasswordParams: NewPasswordDto) {
+    const user = await this.findOne({
+      where: {
+        resetPasswordToken: newPasswordParams.resetPasswordToken,
+        isConfirmed: true,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    user.password = newPasswordParams.newPassword;
+    await user.encryptPassword();
+
+    compare(newPasswordParams.newPassword, user.password, (_err, res) => {
+      console.log(res);
     });
 
-    return user;
+    return await this.usersRepository.update(user.id, {
+      password: user.password,
+      resetPasswordToken: null,
+    });
   }
 }
