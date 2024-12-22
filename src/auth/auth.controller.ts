@@ -6,10 +6,13 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dtos/sign-in.dto';
+import { NewPasswordDto } from './dtos/new-password.dto';
+import { RecoverPasswordDto } from './dtos/recover-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,5 +36,24 @@ export class AuthController {
     }
 
     return this.authService.confirmUser(token);
+  }
+
+  @Get('reset-password')
+  async passwordRecovery(@Query('token') token: string) {
+    if (!token) {
+      throw new NotFoundException('No token provided');
+    }
+
+    return await this.authService.resetPassword(token);
+  }
+
+  @Post('new-password')
+  async setNewPassword(@Body() resetPasswordParams: NewPasswordDto) {
+    return await this.authService.setNewPassword(resetPasswordParams);
+  }
+
+  @Post('recover-password')
+  async recoverPassword(@Body() recoverParams: RecoverPasswordDto) {
+    return await this.authService.recoverPassword(recoverParams);
   }
 }

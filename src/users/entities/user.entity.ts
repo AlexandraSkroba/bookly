@@ -26,6 +26,10 @@ export class UserEntity extends BasicEntity {
   @Exclude({ toPlainOnly: true })
   confirmationToken: string;
 
+  @Column({ nullable: true })
+  @Exclude({ toPlainOnly: true })
+  resetPasswordToken: string;
+
   @OneToMany(() => BookEntity, (book) => book.user)
   books: BookEntity[];
 
@@ -37,6 +41,11 @@ export class UserEntity extends BasicEntity {
   @BeforeInsert()
   async generateConfirmationToken() {
     this.confirmationToken = await v4();
+  }
+
+  async generateResetPasswordToken() {
+    this.resetPasswordToken = await v4();
+    return this.resetPasswordToken;
   }
 
   @BeforeInsert()
