@@ -24,7 +24,6 @@ export class AuthMiddleware implements NestMiddleware {
         'Insufficient permissions to access this resource',
       );
     }
-
     const token = req.headers.authorization.split(' ')[1];
     try {
       const payload = await this.jwtService.verify(token, {

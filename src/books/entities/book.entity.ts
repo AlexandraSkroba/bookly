@@ -1,18 +1,19 @@
 import { UserEntity } from 'src/users/entities/user.entity';
 import { BasicEntity } from '../../database/entities/basic.entity';
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  JoinTable,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
 
 export enum BookCondition {
   new = 'new',
   used = 'used',
   damaged = 'damaged',
+}
+
+export enum BookExchangeState {
+  'available' = 'available',
+  'requested' = 'requested',
+  'in exchange' = 'in exchange',
+  'exchanged' = 'exchanged'
 }
 
 @Entity('books')
@@ -38,7 +39,13 @@ export class BookEntity extends BasicEntity {
   @Column({ type: 'varchar' })
   city: string;
 
+  @Column({ type: 'enum', enum: BookExchangeState, default: BookExchangeState.available })
+  exchangeState: BookExchangeState;
+
   @ManyToOne(() => UserEntity, (user) => user.id, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  owner: UserEntity;
+
+  @ManyToOne(() => ExchangeEntity, (exchange) => exchange.book)
+  exchanges: ExchangeEntity;
 }
