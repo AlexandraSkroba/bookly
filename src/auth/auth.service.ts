@@ -18,7 +18,7 @@ export class AuthService {
     const newUser = await this.UsersService.create(createUserDto);
 
     const confirmationUrl =
-      process.env.APP_URL + '/auth/confirm/' + newUser.confirmationToken;
+      process.env.FRONTEND_URL + '/auth/confirm/?token=' + newUser.confirmationToken;
     const data = {
       to: newUser.email,
       subject: 'Confirm your email',
