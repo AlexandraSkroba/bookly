@@ -16,7 +16,7 @@ export class ExchangesService {
     private readonly usersRepository: Repository<UserEntity>,
     @InjectRepository(BookEntity)
     private readonly booksRepository: Repository<BookEntity>,
-    private readonly booksService: BooksService
+    private readonly booksService: BooksService,
   ) {}
 
   async findAll(user: UserEntity) {
@@ -69,7 +69,10 @@ export class ExchangesService {
           relations: ['from', 'to'],
         });
 
-        this.booksService.changeState(exchange.book.id, BookExchangeState.requested)
+        this.booksService.changeState(
+          exchange.book.id,
+          BookExchangeState.requested,
+        );
         break;
       }
       case ExchangeState.approved || ExchangeState.declined: {
@@ -78,7 +81,9 @@ export class ExchangesService {
           relations: ['from'],
         });
 
-        if (!exchange) { throw new NotFoundException(); }
+        if (!exchange) {
+          throw new NotFoundException();
+        }
 
         // if we're approving the exchange, book state will change to "in exchange"
         // if we're declining the exchange and there is no other exchanges requested for this book, then book becomes "available", otherwise "requested"
@@ -86,7 +91,14 @@ export class ExchangesService {
         if (state === ExchangeState.approved) {
           bookState = BookExchangeState['in exchange'];
         } else {
-          if ((await this.exchangesRepository.find({where: { book: { id: exchange.book.id } }, relations: ['book'] })).length > 1) {
+          if (
+            (
+              await this.exchangesRepository.find({
+                where: { book: { id: exchange.book.id } },
+                relations: ['book'],
+              })
+            ).length > 1
+          ) {
             bookState = BookExchangeState['requested'];
           } else {
             bookState = BookExchangeState['available'];
@@ -102,9 +114,11 @@ export class ExchangesService {
           relations: ['book', 'to'],
         });
 
-        if (!exchange) { throw new NotFoundException(); }
+        if (!exchange) {
+          throw new NotFoundException();
+        }
 
-        await this.completeExchange(exchange.book.id, exchange.to)
+        await this.completeExchange(exchange.book.id, exchange.to);
         break;
       }
     }
@@ -115,11 +129,19 @@ export class ExchangesService {
   }
 
   async completeExchange(id: number, user: UserEntity) {
-    const exchange = await this.exchangesRepository.findOne({ where: {id, to: { id: user.id } }, relations: ['book', 'from', 'to'] })
-    if (!exchange) { throw new NotFoundException() }
+    const exchange = await this.exchangesRepository.findOne({
+      where: { id, to: { id: user.id } },
+      relations: ['book', 'from', 'to'],
+    });
+    if (!exchange) {
+      throw new NotFoundException();
+    }
 
     await this.booksService.changeOwner(exchange.book.id, exchange.to);
-    return await this.booksService.changeState(exchange.book.id, BookExchangeState.exchanged);
+    return await this.booksService.changeState(
+      exchange.book.id,
+      BookExchangeState.exchanged,
+    );
   }
 
   async delete(id: number, to: UserEntity) {

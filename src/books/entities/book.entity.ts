@@ -13,7 +13,7 @@ export enum BookExchangeState {
   'available' = 'available',
   'requested' = 'requested',
   'in exchange' = 'in exchange',
-  'exchanged' = 'exchanged'
+  'exchanged' = 'exchanged',
 }
 
 @Entity('books')
@@ -39,7 +39,11 @@ export class BookEntity extends BasicEntity {
   @Column({ type: 'varchar' })
   city: string;
 
-  @Column({ type: 'enum', enum: BookExchangeState, default: BookExchangeState.available })
+  @Column({
+    type: 'enum',
+    enum: BookExchangeState,
+    default: BookExchangeState.available,
+  })
   exchangeState: BookExchangeState;
 
   @ManyToOne(() => UserEntity, (user) => user.id, { nullable: false })

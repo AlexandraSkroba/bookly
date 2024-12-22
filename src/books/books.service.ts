@@ -90,11 +90,11 @@ export class BooksService {
   }
 
   async changeOwner(bookId: number, newOwner: UserEntity) {
-    return await this.booksRepository.update(bookId, { owner: newOwner })
+    return await this.booksRepository.update(bookId, { owner: newOwner });
   }
 
   async changeState(bookId: number, exchangeState: BookExchangeState) {
-    return await this.booksRepository.update(bookId, { exchangeState })
+    return await this.booksRepository.update(bookId, { exchangeState });
   }
 
   private formSQL(filters: FilterBooksDto) {
