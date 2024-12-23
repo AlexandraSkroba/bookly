@@ -24,10 +24,18 @@ export class UsersController {
   constructor(@Inject(UsersService) private usersService: UsersService) {}
 
   @Get(':id')
-  async show(@Param('id') id: number) {
+  async show(@Req() req: Request, @Param('id') id: number) {
     return await this.usersService.findOne({
       where: { id },
-      relations: ['books', 'incomingExchanges', 'outComingExchanges'],
+      relations: ['books', 'incomingExchanges', 'outcomingExchanges'],
+    });
+  }
+
+  @Get()
+  async showCurrent(@Req() req: Request) {
+    return await this.usersService.findOne({
+      where: { id: req.currentUser.id },
+      relations: ['books', 'incomingExchanges', 'outcomingExchanges'],
     });
   }
 
@@ -44,9 +52,9 @@ export class UsersController {
   }
 
   @Get(':id/avatar')
-  async getAvatar(@Param('id') id: number, @Res() res: Response) {
-    const user = await this.usersService.findOne({ where: { id } });
-    const file = createReadStream(join(process.cwd(), 'uploads', user.avatar));
+  async getAvatar(@Req() req: Request, @Param('id') id: number, @Res() res: Response) {
+    const user = await this.usersService.findOne({ where: { id: id ?? req.currentUser.id } });
+    const file = createReadStream(join(process.cwd(), 'uploads', user.avatar || 'basic_avatar.jpg'));
     file.pipe(res);
   }
 

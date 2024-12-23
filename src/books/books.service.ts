@@ -45,7 +45,6 @@ export class BooksService {
 
   async search(filters: FilterBooksDto, page: number, limit: number) {
     const rawBooks = await this.entityManager.query(this.formSQL(filters));
-    console.log(rawBooks);
     return rawBooks.map((rawBook) => {
       const book = new BookEntity();
       Object.assign(book, rawBook);

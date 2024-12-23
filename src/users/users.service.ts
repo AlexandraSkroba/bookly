@@ -106,10 +106,6 @@ export class UsersService {
     user.password = newPasswordParams.newPassword;
     await user.encryptPassword();
 
-    compare(newPasswordParams.newPassword, user.password, (_err, res) => {
-      console.log(res);
-    });
-
     return await this.usersRepository.update(user.id, {
       password: user.password,
       resetPasswordToken: null,
