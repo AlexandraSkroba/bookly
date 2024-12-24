@@ -30,13 +30,12 @@ export class BooksService {
     return book;
   }
 
+
   async findAll(
     page: number,
     limit: number,
   ): Promise<{ books: BookEntity[]; total: number }> {
     const books = await this.booksRepository.find({
-      take: limit,
-      skip: (page - 1) * limit,
       relations: ['owner'],
     });
     const total = books.length;
