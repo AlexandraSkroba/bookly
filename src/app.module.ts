@@ -10,6 +10,7 @@ import { AuthMiddleware } from './auth/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { BooksModule } from './books/books.module';
 import { ExchangesModule } from './exchanges/exchanges.module';
+import { RatingsModule } from './ratings/ratings.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ExchangesModule } from './exchanges/exchanges.module';
     AuthModule,
     BooksModule,
     ExchangesModule,
+    RatingsModule,
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST || 'localhost',

@@ -56,7 +56,7 @@ export class BooksController {
   @Get(':id')
   async show(@Req() req: Request, @Param('id') bookId: number) {
     const book = await this.booksService.findOne(bookId);
-    return { book, isOwner: book.owner.id === req.currentUser.id }
+    return { book, isOwner: book.owner.id === req.currentUser.id };
   }
 
   @Delete(':id')

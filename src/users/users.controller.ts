@@ -34,6 +34,12 @@ export class UsersController {
     });
   }
 
+  // Return current user to clarify things on frontend, f.e. if he's the owner of given record
+  @Get('current')
+  async ping(@Req() req: Request) {
+    return req.currentUser;
+  }
+
   @Get()
   async showCurrent(@Req() req: Request) {
     return await this.usersService.findOne({

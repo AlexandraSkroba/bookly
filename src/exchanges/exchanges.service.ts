@@ -26,10 +26,13 @@ export class ExchangesService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(
+    id: number,
+    relations: string[] = ['from', 'to', 'book', 'ratings'],
+  ) {
     const exchange = await this.exchangesRepository.findOne({
       where: { id },
-      relations: ['from', 'to', 'book'],
+      relations: relations,
     });
     if (!exchange) {
       throw new NotFoundException();
@@ -137,7 +140,7 @@ export class ExchangesService {
       throw new NotFoundException();
     }
 
-    await this.booksService.changeOwner(exchange.book.id, exchange.to);
+    this.booksService.changeOwner(exchange.book.id, exchange.to);
     return await this.booksService.changeState(
       exchange.book.id,
       BookExchangeState.exchanged,
