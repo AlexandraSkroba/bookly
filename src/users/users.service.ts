@@ -11,6 +11,11 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { SignInDto } from 'src/auth/dtos/sign-in.dto';
 import { NewPasswordDto } from 'src/auth/dtos/new-password.dto';
+import { UpdateEmailDto } from './dtos/update-email.dto';
+import { v4 } from 'uuid';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
+import { UpdatePasswordDto } from './dtos/update-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +24,7 @@ export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    @InjectQueue('email') private readonly emailQueue: Queue,
   ) {}
 
   async findOne(params: Object) {
@@ -46,8 +52,39 @@ export class UsersService {
     }
   }
 
-  async update(userId, params) {
+  async update(userId: number, params: any) {
     return await this.usersRepository.update(userId, params);
+  }
+
+  async updateEmail(userId: number, params: UpdateEmailDto) {
+    const confirmationToken = await v4();
+    await this.usersRepository.update(userId, {
+      email: params.email,
+      isConfirmed: false,
+      confirmationToken,
+    });
+
+    const confirmationUrl =
+      process.env.FRONTEND_URL + '/email/confirm/?token=' + confirmationToken;
+    const data = {
+      to: params.email,
+      subject: 'Confirm your email',
+      context: { confirmationUrl },
+    };
+
+    await this.emailQueue.add('confirmation', data, { delay: 0 });
+    return {
+      message: 'Please confirm email changes.',
+    };
+  }
+
+  async updatePassword(user: UserEntity, params: UpdatePasswordDto) {
+    user.password = params.newPassword;
+    await user.encryptPassword();
+
+    return await this.usersRepository.update(user.id, {
+      password: user.password,
+    });
   }
 
   async confirmUser(confirmationToken: string) {
@@ -105,10 +142,6 @@ export class UsersService {
 
     user.password = newPasswordParams.newPassword;
     await user.encryptPassword();
-
-    compare(newPasswordParams.newPassword, user.password, (_err, res) => {
-      console.log(res);
-    });
 
     return await this.usersRepository.update(user.id, {
       password: user.password,

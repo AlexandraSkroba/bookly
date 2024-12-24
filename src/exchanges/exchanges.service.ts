@@ -22,7 +22,7 @@ export class ExchangesService {
   async findAll(user: UserEntity) {
     return await this.exchangesRepository.find({
       where: [{ from: { id: user.id } }, { to: { id: user.id } }],
-      relations: ['from', 'to'],
+      relations: ['from', 'to', 'book'],
     });
   }
 

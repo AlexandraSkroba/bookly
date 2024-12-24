@@ -6,10 +6,12 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { UsersController } from './users.controller';
 import { UserEntity } from './entities/user.entity';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
+    BullModule.registerQueue({ name: 'email' }),
     MulterModule.register({
       storage: diskStorage({
         destination: (_req, _file, cb) => {

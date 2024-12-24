@@ -30,13 +30,12 @@ export class BooksService {
     return book;
   }
 
+
   async findAll(
     page: number,
     limit: number,
   ): Promise<{ books: BookEntity[]; total: number }> {
     const books = await this.booksRepository.find({
-      take: limit,
-      skip: (page - 1) * limit,
       relations: ['owner'],
     });
     const total = books.length;
@@ -45,7 +44,6 @@ export class BooksService {
 
   async search(filters: FilterBooksDto, page: number, limit: number) {
     const rawBooks = await this.entityManager.query(this.formSQL(filters));
-    console.log(rawBooks);
     return rawBooks.map((rawBook) => {
       const book = new BookEntity();
       Object.assign(book, rawBook);
