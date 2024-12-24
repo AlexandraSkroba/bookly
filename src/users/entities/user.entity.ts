@@ -5,6 +5,7 @@ import { v4 } from 'uuid';
 import { BookEntity } from 'src/books/entities/book.entity';
 import { Exclude, classToPlain } from 'class-transformer';
 import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
+import { RatingEntity } from 'src/ratings/entities/rating.entity';
 
 @Entity('users')
 export class UserEntity extends BasicEntity {
@@ -42,6 +43,9 @@ export class UserEntity extends BasicEntity {
 
   @OneToMany(() => ExchangeEntity, (exchange) => exchange.to)
   incomingExchanges: ExchangeEntity[];
+
+  @OneToMany(() => RatingEntity, (rating) => rating.owner)
+  ratings: RatingEntity[];
 
   @BeforeInsert()
   async encryptPassword() {

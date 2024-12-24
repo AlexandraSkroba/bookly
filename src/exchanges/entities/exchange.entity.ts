@@ -40,6 +40,15 @@ export class ExchangeEntity extends BasicEntity {
   })
   state: ExchangeState;
 
+  @Column({ type: 'date', nullable: true })
+  acceptedDate: Date;
+
+  @Column({ type: 'date', nullable: true })
+  declinedDate: Date;
+
+  @Column({ type: 'date', nullable: true })
+  completedDate: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookEntity, BookExchangeState } from './entities/book.entity';
-import { EntityManager, Filter, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { BookDto } from './dtos/book.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { FilterBooksDto } from './dtos/filter-books.dto';
@@ -19,17 +19,20 @@ export class BooksService {
     private entityManager: EntityManager,
   ) {}
 
-  async findOne(bookId: number) {
+  async findOne(
+    id: number,
+    where: object = { id },
+    relations: string[] = ['owner', 'ratings'],
+  ) {
     const book = await this.booksRepository.findOne({
-      where: { id: bookId },
-      relations: ['owner'],
+      where,
+      relations,
     });
     if (!book) {
       throw new NotFoundException();
     }
     return book;
   }
-
 
   async findAll(
     page: number,
@@ -58,7 +61,7 @@ export class BooksService {
       ...bookParams,
     });
 
-    return await this.booksRepository.save(newBook);
+    return this.booksRepository.save(newBook);
   }
 
   async update(bookId: number, bookParams: BookDto, owner: UserEntity) {
