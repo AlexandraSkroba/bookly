@@ -2,6 +2,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { BasicEntity } from '../../database/entities/basic.entity';
 import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
 import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
+import { RatingEntity } from 'src/ratings/entities/rating.entity';
 
 export enum BookCondition {
   new = 'new',
