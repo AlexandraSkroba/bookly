@@ -11,6 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { BooksModule } from './books/books.module';
 import { ExchangesModule } from './exchanges/exchanges.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { NotificationsController } from './notifications/notifications.controller';
 
 @Module({
   imports: [
@@ -28,7 +30,6 @@ import { RatingsModule } from './ratings/ratings.module';
         port: parseInt(process.env.REDIS_PORT) || 6379,
       },
     }),
-    BullModule.registerQueue({ name: 'email' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -37,6 +38,7 @@ import { RatingsModule } from './ratings/ratings.module';
       }),
       inject: [ConfigService],
     }),
+    NotificationsModule,
   ],
   controllers: [AppController],
 })

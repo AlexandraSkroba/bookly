@@ -26,18 +26,18 @@ import { UpdatePasswordDto } from './dtos/update-password.dto';
 export class UsersController {
   constructor(@Inject(UsersService) private usersService: UsersService) {}
 
+  // Return current user to clarify things on frontend, f.e. if he's the owner of given record
+  @Get('/current')
+  async getCurrent(@Req() req: Request) {
+    return req.currentUser;
+  }
+
   @Get(':id')
   async show(@Req() req: Request, @Param('id') id: number) {
     return await this.usersService.findOne({
       where: { id },
       relations: ['books', 'incomingExchanges', 'outcomingExchanges'],
     });
-  }
-
-  // Return current user to clarify things on frontend, f.e. if he's the owner of given record
-  @Get('current')
-  async ping(@Req() req: Request) {
-    return req.currentUser;
   }
 
   @Get()

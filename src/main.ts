@@ -21,10 +21,10 @@ async function bootstrap() {
     .setDescription('Book exchange service')
     .setVersion('1.0')
     .addTag('books')
-    .build()
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api/docs", app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
   const uploadDir = join(process.cwd(), 'uploads');

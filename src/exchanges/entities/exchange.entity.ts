@@ -1,15 +1,7 @@
 import { BookEntity } from 'src/books/entities/book.entity';
 import { BasicEntity } from 'src/database/entities/basic.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
 export enum ExchangeState {
   preparation = 'preparation',
@@ -48,10 +40,4 @@ export class ExchangeEntity extends BasicEntity {
 
   @Column({ type: 'date', nullable: true })
   completedDate: Date;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

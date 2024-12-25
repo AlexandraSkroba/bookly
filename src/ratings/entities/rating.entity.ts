@@ -1,14 +1,7 @@
 import { BasicEntity } from 'src/database/entities/basic.entity';
 import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 export enum RatingTarget {
   'exchange' = 'exchange',
@@ -33,10 +26,4 @@ export class RatingEntity extends BasicEntity {
 
   @Column({ type: 'integer' })
   targetId: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
