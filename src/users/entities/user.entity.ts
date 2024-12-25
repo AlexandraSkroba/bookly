@@ -1,6 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { BasicEntity } from '../../database/entities/basic.entity';
-import { Column, Entity, Index, BeforeInsert, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  BeforeInsert,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { v4 } from 'uuid';
 import { BookEntity } from 'src/books/entities/book.entity';
 import { Exclude, classToPlain } from 'class-transformer';

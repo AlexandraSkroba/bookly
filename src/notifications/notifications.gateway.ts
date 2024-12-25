@@ -1,7 +1,7 @@
-import { OnModuleInit } from "@nestjs/common";
-import { WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { OnModuleInit } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { NotificationsService } from "./notifications.service";
+import { NotificationsService } from './notifications.service';
 
 @WebSocketGateway({ cors: true })
 export class NotificationsGateway implements OnModuleInit {
@@ -17,14 +17,23 @@ export class NotificationsGateway implements OnModuleInit {
     });
   }
 
-  async handleNotification(userIds: number[], text: string) {
+  async handleNotification(userIds: number[], id: number, text: string) {
     const socketIds = await this.notificationsService.sendNotification(userIds);
     socketIds.map((id, _i) => {
-      this.server.to(id).emit('notification', text)
-    })
+      this.server.to(id).emit('notification', { text, id });
+    });
   }
 
   async triggerSample(currentUserId: number) {
-    await this.handleNotification([currentUserId], 'This is a test notification');
+    const notification = await this.notificationsService.create(
+      'This is a test notification',
+      [currentUserId],
+    );
+
+    await this.handleNotification(
+      [currentUserId],
+      notification.id,
+      notification.text,
+    );
   }
 }

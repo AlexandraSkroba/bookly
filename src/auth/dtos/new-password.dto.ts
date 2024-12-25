@@ -3,7 +3,6 @@ import { IsStrongPassword } from 'src/users/validators/is-strong-password.valida
 import { Match } from 'src/users/validators/match.validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-
 export class NewPasswordDto {
   @IsNotEmpty()
   @ApiProperty()
