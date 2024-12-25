@@ -1,11 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import { BasicEntity } from '../../database/entities/basic.entity';
-import { Column, Entity, Index, BeforeInsert, OneToMany } from 'typeorm';
+import { Column, Entity, Index, BeforeInsert, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { v4 } from 'uuid';
 import { BookEntity } from 'src/books/entities/book.entity';
 import { Exclude, classToPlain } from 'class-transformer';
 import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
+import { Notification } from 'src/notifications/entities/notification.entity';
 
 @Entity('users')
 export class UserEntity extends BasicEntity {
@@ -46,6 +47,12 @@ export class UserEntity extends BasicEntity {
 
   @OneToMany(() => RatingEntity, (rating) => rating.owner)
   ratings: RatingEntity[];
+
+  @ManyToMany(() => Notification, (notification) => notification.users)
+  notifications: Notification[];
+
+  @Column({ nullable: true })
+  socketId: string;
 
   @BeforeInsert()
   async encryptPassword() {

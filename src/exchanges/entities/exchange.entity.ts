@@ -3,12 +3,10 @@ import { BasicEntity } from 'src/database/entities/basic.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
-  ManyToOne,
-  UpdateDateColumn,
+  ManyToOne
 } from 'typeorm';
 
 export enum ExchangeState {
@@ -48,10 +46,4 @@ export class ExchangeEntity extends BasicEntity {
 
   @Column({ type: 'date', nullable: true })
   completedDate: Date;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

@@ -43,7 +43,6 @@ export class AuthMiddleware implements NestMiddleware {
 
       throw new UnauthorizedException(e.message);
     }
-
     next();
   }
 }
