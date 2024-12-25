@@ -6,6 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import * as express from 'express';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,16 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+
+  const config = new DocumentBuilder()
+    .setTitle('Bookly')
+    .setDescription('Book exchange service')
+    .setVersion('1.0')
+    .addTag('books')
+    .build()
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api/docs", app, document);
 
   app.useGlobalPipes(new ValidationPipe());
   const uploadDir = join(process.cwd(), 'uploads');
