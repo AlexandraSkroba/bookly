@@ -6,10 +6,14 @@ import { ExchangeEntity } from './entities/exchange.entity';
 import { ExchangesService } from './exchanges.service';
 import { ExchangesController } from './exchanges.controller';
 import { BooksService } from 'src/books/books.service';
+import { Dialog } from 'src/dialogs/entities/dialog.entity';
+import { DialogsService } from 'src/dialogs/dialogs.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExchangeEntity, UserEntity, BookEntity])],
-  providers: [ExchangesService, BooksService],
+  imports: [
+    TypeOrmModule.forFeature([ExchangeEntity, UserEntity, BookEntity, Dialog]),
+  ],
+  providers: [ExchangesService, BooksService, DialogsService],
   controllers: [ExchangesController],
 })
 export class ExchangesModule {}

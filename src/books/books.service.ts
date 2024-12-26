@@ -22,7 +22,7 @@ export class BooksService {
   async findOne(
     id: number,
     where: object = { id },
-    relations: string[] = ['owner', 'ratings'],
+    relations: string[] = ['owner'],
   ) {
     const book = await this.booksRepository.findOne({
       where,

@@ -12,7 +12,7 @@ import { BooksModule } from './books/books.module';
 import { ExchangesModule } from './exchanges/exchanges.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { NotificationsController } from './notifications/notifications.controller';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -39,6 +39,7 @@ import { NotificationsController } from './notifications/notifications.controlle
       inject: [ConfigService],
     }),
     NotificationsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
 })

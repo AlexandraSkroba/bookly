@@ -26,10 +26,7 @@ export class ExchangesService {
     });
   }
 
-  async findOne(
-    id: number,
-    relations: string[] = ['from', 'to', 'book', 'ratings'],
-  ) {
+  async findOne(id: number, relations: string[] = ['from', 'to', 'book']) {
     const exchange = await this.exchangesRepository.findOne({
       where: { id },
       relations: relations,

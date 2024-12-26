@@ -15,6 +15,8 @@ import { Exclude, classToPlain } from 'class-transformer';
 import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
+import { Dialog } from 'src/dialogs/entities/dialog.entity';
+import { Message } from 'src/messages/entities/message.entity';
 
 @Entity('users')
 export class UserEntity extends BasicEntity {
@@ -61,6 +63,15 @@ export class UserEntity extends BasicEntity {
 
   @Column({ nullable: true })
   socketId: string;
+
+  @Column({ nullable: true })
+  messagesSocketId: string;
+
+  @ManyToMany(() => Dialog, (dialog) => dialog.users)
+  dialogs: Dialog[];
+
+  @OneToMany(() => Message, (message) => message.author)
+  messages: Message[];
 
   @BeforeInsert()
   async encryptPassword() {

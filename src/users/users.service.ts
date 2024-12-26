@@ -19,13 +19,15 @@ import { UpdatePasswordDto } from './dtos/update-password.dto';
 
 @Injectable()
 export class UsersService {
-  private confirmationResult: Boolean;
-
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
     @InjectQueue('email') private readonly emailQueue: Queue,
   ) {}
+
+  async find(params: Object) {
+    return await this.usersRepository.find(params);
+  }
 
   async findOne(params: Object) {
     const user = await this.usersRepository.findOne(params);
