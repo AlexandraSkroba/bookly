@@ -13,6 +13,7 @@ import { ExchangesModule } from './exchanges/exchanges.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagesModule } from './messages/messages.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { MessagesModule } from './messages/messages.module';
     }),
     NotificationsModule,
     MessagesModule,
+    SubscriptionsModule,
   ],
   controllers: [AppController],
 })
