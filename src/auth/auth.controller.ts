@@ -18,7 +18,7 @@ import { RecoverPasswordDto } from './dtos/recover-password.dto';
 export class AuthController {
   constructor(@Inject(AuthService) private authService: AuthService) {}
 
-  @Post('/')
+  @Post()
   async signIn(@Body() credentials: SignInDto) {
     const token = this.authService.authorizeUser(credentials);
     return token;

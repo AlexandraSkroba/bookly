@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { NotificationsGateway } from './notifications.gateway';
 
 @Injectable()
 export class NotificationsService {
@@ -10,7 +11,7 @@ export class NotificationsService {
     @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
     @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<UserEntity>,
+    private readonly usersRepository: Repository<UserEntity>
   ) {}
 
   async findAll() {
@@ -21,11 +22,11 @@ export class NotificationsService {
     return this.notificationsRepository.find({ where: { users: { id } } });
   }
 
-  async addUser(userId: number, socketId) {
+  async addUser(userId: number, socketId: string) {
     await this.usersRepository.update(userId, { socketId });
   }
 
-  async sendNotification(userIds: number[]) {
+  async getSockets(userIds: number[]) {
     const users = await this.usersRepository.find({
       where: { id: In(userIds) },
     });
@@ -40,7 +41,7 @@ export class NotificationsService {
       where: { id: In(userIds) },
     });
     notification.users = users;
-    return this.notificationsRepository.save(notification);
+    return await this.notificationsRepository.save(notification);
   }
 
   async destroy(id: number, userId: number) {

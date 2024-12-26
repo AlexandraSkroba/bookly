@@ -77,6 +77,9 @@ export class UserEntity extends BasicEntity {
   @OneToMany(() => Subscription, (subscription) => subscription.subscriber)
   subscriptions: Subscription[];
 
+  @Column({ type: 'boolean', default: false })
+  notifyByEmail: boolean;
+
   @BeforeInsert()
   async encryptPassword() {
     this.password = await bcrypt.hash(this.password, 10);

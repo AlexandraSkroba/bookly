@@ -4,9 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookEntity } from './entities/book.entity';
 import { BooksController } from './books.controller';
 import { UserEntity } from 'src/users/entities/user.entity';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BookEntity, UserEntity])],
+  imports: [TypeOrmModule.forFeature([BookEntity, UserEntity]), EventEmitterModule.forRoot()],
   providers: [BooksService],
   controllers: [BooksController],
 })

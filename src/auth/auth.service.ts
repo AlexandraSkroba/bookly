@@ -28,7 +28,6 @@ export class AuthService {
       subject: 'Confirm your email',
       context: { confirmationUrl },
     };
-
     await this.emailQueue.add('confirmation', data, { delay: 0 });
     return {
       message: 'You signed up successfully! Now please confirm your email',

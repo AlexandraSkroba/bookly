@@ -18,6 +18,10 @@ export class SubscriptionsService {
     private readonly userssRepository: Repository<UserEntity>,
   ) {}
 
+  async find(params) {
+    return await this.subscriptionsRepository.find(params);
+  }
+
   async create(params: CreateSubscriptionDto, currentUser) {
     const existingSubscription = await this.subscriptionsRepository.findOne({
       where: {
