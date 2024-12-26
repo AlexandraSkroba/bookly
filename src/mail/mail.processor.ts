@@ -40,6 +40,18 @@ export class EmailProcessor {
     });
   }
 
+  @Process('notification')
+  async notify(job: Job<MailInterface>) {
+    const { data } = job;
+
+    await this.mailService.sendMail({
+      to: data.to,
+      subject: data.subject,
+      template: 'reset-password',
+      context: data.context,
+    });
+  }
+
   @OnQueueActive()
   onActive(job: Job) {
     this.logger.log(`Job ${job.id} is now active`);

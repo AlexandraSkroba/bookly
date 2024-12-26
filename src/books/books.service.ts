@@ -10,6 +10,8 @@ import { EntityManager, Repository } from 'typeorm';
 import { BookDto } from './dtos/book.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { FilterBooksDto } from './dtos/filter-books.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { BookAddedEvent } from 'src/notifications/events/book-added.event';
 
 @Injectable()
 export class BooksService {
@@ -17,6 +19,7 @@ export class BooksService {
     @InjectRepository(BookEntity)
     private readonly booksRepository: Repository<BookEntity>,
     private entityManager: EntityManager,
+    private eventEmitter: EventEmitter2
   ) {}
 
   async findOne(
@@ -32,6 +35,10 @@ export class BooksService {
       throw new NotFoundException();
     }
     return book;
+  }
+
+  async retrieveOne(params: Object) {
+    return this.booksRepository.findOne(params);
   }
 
   async findAll(
@@ -61,7 +68,9 @@ export class BooksService {
       ...bookParams,
     });
 
-    return this.booksRepository.save(newBook);
+    const result = await this.booksRepository.save(newBook);
+    this.eventEmitter.emit('book.added', new BookAddedEvent(currentUser.id, result.id))
+    return result;
   }
 
   async update(bookId: number, bookParams: BookDto, owner: UserEntity) {

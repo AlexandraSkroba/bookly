@@ -37,7 +37,7 @@ import { BullModule } from '@nestjs/bull';
     }),
   ],
   providers: [UsersService],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, BullModule],
   controllers: [UsersController],
 })
 export class UsersModule {}

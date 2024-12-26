@@ -50,5 +50,6 @@ export class ExchangeEntity extends BasicEntity {
   completedDate: Date;
 
   @OneToOne(() => Dialog, (dialog) => dialog.subject)
+  @JoinColumn({ name: 'dialog_id' })
   dialog: Dialog;
 }

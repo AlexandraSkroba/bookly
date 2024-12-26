@@ -17,6 +17,7 @@ import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { Notification } from 'src/notifications/entities/notification.entity';
 import { Dialog } from 'src/dialogs/entities/dialog.entity';
 import { Message } from 'src/messages/entities/message.entity';
+import { Subscription } from 'src/subscriptions/entities/subscription.entity';
 
 @Entity('users')
 export class UserEntity extends BasicEntity {
@@ -72,6 +73,12 @@ export class UserEntity extends BasicEntity {
 
   @OneToMany(() => Message, (message) => message.author)
   messages: Message[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.subscriber)
+  subscriptions: Subscription[];
+
+  @Column({ type: 'boolean', default: false })
+  notifyByEmail: boolean;
 
   @BeforeInsert()
   async encryptPassword() {
