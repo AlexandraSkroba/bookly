@@ -7,6 +7,7 @@ import { SignInDto } from './dtos/sign-in.dto';
 import { JwtService } from '@nestjs/jwt';
 import { NewPasswordDto } from './dtos/new-password.dto';
 import { RecoverPasswordDto } from './dtos/recover-password.dto';
+import { UserEntity } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -45,14 +46,14 @@ export class AuthService {
 
   async authorizeUser(
     credentials: SignInDto,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string, user: Object }> {
     const user = await this.UsersService.authenticate(credentials);
     const payload = {
       sub: user.id,
       username: user.username,
       email: user.email,
     };
-    return { access_token: this.jwtService.sign(payload) };
+    return { access_token: this.jwtService.sign(payload), user: user.toJSON() };
   }
 
   async resetPassword(token: string) {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExchangeEntity, ExchangeState } from './entities/exchange.entity';
 import { Repository } from 'typeorm';
@@ -53,7 +53,10 @@ export class ExchangesService {
       throw new NotFoundException();
     }
 
+    const existingExchange = await this.exchangesRepository.findOne({ where: { book: { id: book.id }, to: { id: to.id } }, relations: ['book', 'to'] })
+    if (existingExchange) { throw new ConflictException('Exchange already created') }
     const newExchange = this.exchangesRepository.create({ from, to, book });
+    this.booksRepository.update(book.id, { exchangeState: BookExchangeState.requested })
     return await this.exchangesRepository.save(newExchange);
   }
 

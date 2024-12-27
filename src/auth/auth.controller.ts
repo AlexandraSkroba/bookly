@@ -20,8 +20,8 @@ export class AuthController {
 
   @Post()
   async signIn(@Body() credentials: SignInDto) {
-    const token = this.authService.authorizeUser(credentials);
-    return token;
+    const result = await this.authService.authorizeUser(credentials);
+    return result
   }
 
   @Post('signup')
