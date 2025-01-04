@@ -2,14 +2,7 @@ import { BookEntity } from 'src/books/entities/book.entity';
 import { BasicEntity } from 'src/database/entities/basic.entity';
 import { Dialog } from 'src/dialogs/entities/dialog.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-} from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 
 export enum ExchangeState {
   preparation = 'preparation',
@@ -49,7 +42,7 @@ export class ExchangeEntity extends BasicEntity {
   @Column({ type: 'date', nullable: true })
   completedDate: Date;
 
-  @OneToOne(() => Dialog, (dialog) => dialog.subject)
+  @ManyToOne(() => Dialog, (dialog) => dialog.subjects)
   @JoinColumn({ name: 'dialog_id' })
   dialog: Dialog;
 }

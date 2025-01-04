@@ -4,17 +4,41 @@ import { NotificationsService } from './notifications.service';
 import { NotificationsGateway } from './notifications.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
-import { BullModule } from '@nestjs/bull';
+import { BullModule } from '@nestjs/bullmq';
 import { UsersService } from 'src/users/users.service';
 import { BooksService } from 'src/books/books.service';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { BookEntity } from 'src/books/entities/book.entity';
+import { ExchangesService } from 'src/exchanges/exchanges.service';
+import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
+import { DialogsService } from 'src/dialogs/dialogs.service';
+import { Dialog } from 'src/dialogs/entities/dialog.entity';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsListener } from './notifications.listener';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Notification, UserEntity, BookEntity]),
-            BullModule.registerQueue({ name: 'email' }),
-          ],
-  providers: [NotificationsService, NotificationsGateway, UsersService, BooksService],
+  imports: [
+    TypeOrmModule.forFeature([
+      Notification,
+      UserEntity,
+      BookEntity,
+      ExchangeEntity,
+      Dialog,
+    ]),
+    BullModule.registerQueue({ name: 'email' }),
+    EventEmitterModule.forRoot({
+      delimiter: '.',
+    }),
+  ],
+  providers: [
+    NotificationsService,
+    NotificationsGateway,
+    UsersService,
+    BooksService,
+    ExchangesService,
+    DialogsService,
+    NotificationsListener,
+  ],
   controllers: [NotificationsController],
 })
 export class NotificationsModule {}

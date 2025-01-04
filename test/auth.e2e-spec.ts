@@ -45,7 +45,11 @@ describe('AuthController (e2e)', () => {
   });
 
   it('/auth/signup (POST) - signUp', async () => {
-    const newUser = { username: 'newuser', password: 'newpassword', email: 'email@example.com' };
+    const newUser = {
+      username: 'newuser',
+      password: 'newpassword',
+      email: 'email@example.com',
+    };
     authService.signUpUser.mockResolvedValue({ id: 1, ...newUser });
 
     const response = await request(app.getHttpServer())
@@ -83,8 +87,13 @@ describe('AuthController (e2e)', () => {
   });
 
   it('/auth/new-password (POST) - setNewPassword', async () => {
-    const resetParams = { token: 'resetToken', newPassword: 'newSecurePassword' };
-    authService.setNewPassword.mockResolvedValue({ message: 'Password updated' });
+    const resetParams = {
+      token: 'resetToken',
+      newPassword: 'newSecurePassword',
+    };
+    authService.setNewPassword.mockResolvedValue({
+      message: 'Password updated',
+    });
 
     const response = await request(app.getHttpServer())
       .post('/auth/new-password')
@@ -97,7 +106,9 @@ describe('AuthController (e2e)', () => {
 
   it('/auth/recover-password (POST) - recoverPassword', async () => {
     const recoverParams = { email: 'email@example.com' };
-    authService.recoverPassword.mockResolvedValue({ message: 'Recovery email sent' });
+    authService.recoverPassword.mockResolvedValue({
+      message: 'Recovery email sent',
+    });
 
     const response = await request(app.getHttpServer())
       .post('/auth/recover-password')

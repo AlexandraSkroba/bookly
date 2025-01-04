@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExchangeEntity, ExchangeState } from './entities/exchange.entity';
 import { Repository } from 'typeorm';
@@ -6,6 +10,10 @@ import { CreateExchangeDto } from './dtos/create-exchange.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { BookEntity, BookExchangeState } from 'src/books/entities/book.entity';
 import { BooksService } from 'src/books/books.service';
+import { DialogsService } from 'src/dialogs/dialogs.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ExchangeOfferedEvent } from 'src/notifications/events/exchange-offered.event';
+import { UpdateStateDto } from './dtos/update-state.dto';
 
 @Injectable()
 export class ExchangesService {
@@ -17,6 +25,8 @@ export class ExchangesService {
     @InjectRepository(BookEntity)
     private readonly booksRepository: Repository<BookEntity>,
     private readonly booksService: BooksService,
+    private readonly dialogsService: DialogsService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async findAll(user: UserEntity) {
@@ -41,7 +51,7 @@ export class ExchangesService {
   async create(params: CreateExchangeDto, currentUser: UserEntity) {
     const to = currentUser;
     const book = await this.booksRepository.findOne({
-      where: { id: params.bookId },
+      where: { id: params.bookId, exchangeState: BookExchangeState.available },
       relations: ['owner'],
     });
     if (!book) {
@@ -53,77 +63,82 @@ export class ExchangesService {
       throw new NotFoundException();
     }
 
-    const existingExchange = await this.exchangesRepository.findOne({ where: { book: { id: book.id }, to: { id: to.id } }, relations: ['book', 'to'] })
-    if (existingExchange) { throw new ConflictException('Exchange already created') }
+    const existingExchange = await this.exchangesRepository.findOne({
+      where: { book: { id: book.id }, to: { id: to.id } },
+      relations: ['book', 'to'],
+    });
+    if (existingExchange) {
+      throw new ConflictException('Exchange already created');
+    }
     const newExchange = this.exchangesRepository.create({ from, to, book });
-    this.booksRepository.update(book.id, { exchangeState: BookExchangeState.requested })
-    return await this.exchangesRepository.save(newExchange);
+    const result = await this.exchangesRepository.save(newExchange);
+
+    this.booksRepository.update(book.id, {
+      exchangeState: BookExchangeState.requested,
+    });
+
+    const existingDialog = await this.dialogsService.checkExisting(
+      { userId: newExchange.from.id, subjectId: null },
+      currentUser,
+      false,
+    );
+    if (existingDialog) {
+      this.exchangesRepository.update(newExchange.id, {
+        dialog: existingDialog,
+      });
+    } else {
+      this.dialogsService.create(
+        { userId: newExchange.from.id, subjectId: newExchange.id },
+        currentUser,
+      );
+    }
+
+    this.eventEmitter.emit(
+      'exchange.offered',
+      new ExchangeOfferedEvent(
+        result.from.id,
+        result.from.username,
+        book.id,
+        book.title,
+        result.id,
+      ),
+    );
+    return result;
   }
 
-  async updateState(id: number, state: string, user: UserEntity) {
+  async updateState(id: number, params: UpdateStateDto, user: UserEntity) {
+    const state = params.state;
     let exchange: ExchangeEntity;
-    switch (state) {
-      case ExchangeState.preparation: {
-        exchange = await this.exchangesRepository.findOne({
-          where: [
-            { id, to: { id: user.id } },
-            { id, from: { id: user.id } },
-          ],
-          relations: ['from', 'to'],
-        });
 
-        this.booksService.changeState(
-          exchange.book.id,
-          BookExchangeState.requested,
-        );
-        break;
+    if (state === ExchangeState.approved || state === ExchangeState.declined) {
+      exchange = await this.exchangesRepository.findOne({
+        where: { id, from: { id: user.id } },
+        relations: ['book', 'from'],
+      });
+
+      if (!exchange) {
+        throw new NotFoundException('Record not found');
       }
-      case ExchangeState.approved || ExchangeState.declined: {
-        exchange = await this.exchangesRepository.findOne({
-          where: { id, from: { id: user.id } },
-          relations: ['from'],
-        });
 
-        if (!exchange) {
-          throw new NotFoundException();
-        }
-
-        // if we're approving the exchange, book state will change to "in exchange"
-        // if we're declining the exchange and there is no other exchanges requested for this book, then book becomes "available", otherwise "requested"
-        let bookState: BookExchangeState;
-        if (state === ExchangeState.approved) {
-          bookState = BookExchangeState['in exchange'];
-        } else {
-          if (
-            (
-              await this.exchangesRepository.find({
-                where: { book: { id: exchange.book.id } },
-                relations: ['book'],
-              })
-            ).length > 1
-          ) {
-            bookState = BookExchangeState['requested'];
-          } else {
-            bookState = BookExchangeState['available'];
-          }
-        }
-
-        this.booksService.changeState(exchange.book.id, bookState);
-        break;
+      let bookState: BookExchangeState;
+      if (state === ExchangeState.approved) {
+        bookState = BookExchangeState['in exchange'];
+      } else {
+        bookState = BookExchangeState['available'];
       }
-      case ExchangeState.completed: {
-        exchange = await this.exchangesRepository.findOne({
-          where: { id, to: { id: user.id } },
-          relations: ['book', 'to'],
-        });
 
-        if (!exchange) {
-          throw new NotFoundException();
-        }
+      this.booksService.changeState(exchange.book.id, bookState);
+    } else {
+      exchange = await this.exchangesRepository.findOne({
+        where: { id },
+        relations: ['book', 'to'],
+      });
 
-        await this.completeExchange(exchange.book.id, exchange.to);
-        break;
+      if (!exchange) {
+        throw new NotFoundException();
       }
+
+      await this.completeExchange(exchange.book.id);
     }
 
     return await this.exchangesRepository.update(id, {
@@ -131,13 +146,13 @@ export class ExchangesService {
     });
   }
 
-  async completeExchange(id: number, user: UserEntity) {
+  async completeExchange(id: number) {
     const exchange = await this.exchangesRepository.findOne({
-      where: { id, to: { id: user.id } },
+      where: { id },
       relations: ['book', 'from', 'to'],
     });
     if (!exchange) {
-      throw new NotFoundException();
+      throw new NotFoundException('Record not found');
     }
 
     this.booksService.changeOwner(exchange.book.id, exchange.to);

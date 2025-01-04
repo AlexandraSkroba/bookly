@@ -6,12 +6,12 @@ import {
   Post,
   Req,
   Patch,
-  Query,
   Body,
 } from '@nestjs/common';
 import { CreateExchangeDto } from './dtos/create-exchange.dto';
 import { ExchangesService } from './exchanges.service';
 import { Request } from 'express';
+import { UpdateStateDto } from './dtos/update-state.dto';
 
 @Controller('exchanges')
 export class ExchangesController {
@@ -36,9 +36,9 @@ export class ExchangesController {
   async updateState(
     @Req() req: Request,
     @Param('id') id: number,
-    @Query('state') state: string,
+    @Body() params: UpdateStateDto,
   ) {
-    return await this.exchangesService.updateState(id, state, req.currentUser);
+    return await this.exchangesService.updateState(id, params, req.currentUser);
   }
 
   @Delete(':id')

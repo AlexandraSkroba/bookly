@@ -1,4 +1,10 @@
-import { INestApplication, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  INestApplication,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
@@ -83,7 +89,11 @@ describe('BooksController (e2e)', () => {
       .expect(200);
 
     expect(response.body).toEqual({ id: 4, ...bookParams });
-    expect(booksService.update).toHaveBeenCalledWith("4", bookParams, undefined);
+    expect(booksService.update).toHaveBeenCalledWith(
+      '4',
+      bookParams,
+      undefined,
+    );
   });
 
   it('/books/:id (DELETE) - destroy', async () => {
@@ -94,6 +104,6 @@ describe('BooksController (e2e)', () => {
       .expect(200);
 
     expect(response.body).toEqual({ message: 'Book deleted' });
-    expect(booksService.delete).toHaveBeenCalledWith("6", undefined);
+    expect(booksService.delete).toHaveBeenCalledWith('6', undefined);
   });
 });

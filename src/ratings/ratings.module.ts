@@ -10,6 +10,8 @@ import { UsersService } from 'src/users/users.service';
 import { BooksService } from 'src/books/books.service';
 import { ExchangesService } from 'src/exchanges/exchanges.service';
 import { BullModule } from '@nestjs/bull';
+import { DialogsService } from 'src/dialogs/dialogs.service';
+import { Dialog } from 'src/dialogs/entities/dialog.entity';
 
 @Module({
   imports: [
@@ -18,10 +20,17 @@ import { BullModule } from '@nestjs/bull';
       UserEntity,
       BookEntity,
       ExchangeEntity,
+      Dialog,
     ]),
     BullModule.registerQueue({ name: 'email' }),
   ],
-  providers: [RatingsService, BooksService, UsersService, ExchangesService],
+  providers: [
+    RatingsService,
+    BooksService,
+    UsersService,
+    ExchangesService,
+    DialogsService,
+  ],
   controllers: [RatingsController],
 })
 export class RatingsModule {}

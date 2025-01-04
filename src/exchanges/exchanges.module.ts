@@ -8,10 +8,12 @@ import { ExchangesController } from './exchanges.controller';
 import { BooksService } from 'src/books/books.service';
 import { Dialog } from 'src/dialogs/entities/dialog.entity';
 import { DialogsService } from 'src/dialogs/dialogs.service';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ExchangeEntity, UserEntity, BookEntity, Dialog]),
+    EventEmitterModule.forRoot(),
   ],
   providers: [ExchangesService, BooksService, DialogsService],
   controllers: [ExchangesController],
