@@ -3,7 +3,7 @@ import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { NotificationsService } from './notifications.service';
 import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
+import { InjectQueue } from '@nestjs/bullmq';
 import { In, Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -50,7 +50,9 @@ export class NotificationsGateway implements OnModuleInit {
   }
 
   async notifyByEmail(userIds: number[], subject: string, message: string) {
-    const users = await this.usersService.find({ where: { id: In(userIds) } });
+    const users = await this.usersService.find({
+      where: { id: In(userIds), notifyByEmail: true },
+    });
     users.forEach((user) => {
       let data = {
         to: user.email,

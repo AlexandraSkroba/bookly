@@ -15,6 +15,8 @@ import { DialogsService } from 'src/dialogs/dialogs.service';
 import { Dialog } from 'src/dialogs/entities/dialog.entity';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { NotificationsListener } from './notifications.listener';
+import { Message } from 'src/messages/entities/message.entity';
+import { MessagesService } from 'src/messages/messages.service';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { NotificationsListener } from './notifications.listener';
       BookEntity,
       ExchangeEntity,
       Dialog,
+      Message,
     ]),
     BullModule.registerQueue({ name: 'email' }),
     EventEmitterModule.forRoot({
@@ -38,6 +41,7 @@ import { NotificationsListener } from './notifications.listener';
     ExchangesService,
     DialogsService,
     NotificationsListener,
+    MessagesService,
   ],
   controllers: [NotificationsController],
 })
