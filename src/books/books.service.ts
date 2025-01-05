@@ -19,7 +19,7 @@ export class BooksService {
     @InjectRepository(BookEntity)
     private readonly booksRepository: Repository<BookEntity>,
     private entityManager: EntityManager,
-    private eventEmitter: EventEmitter2
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async findOne(
@@ -69,7 +69,10 @@ export class BooksService {
     });
 
     const result = await this.booksRepository.save(newBook);
-    this.eventEmitter.emit('book.added', new BookAddedEvent(currentUser.id, result.id))
+    this.eventEmitter.emit(
+      'book.added',
+      new BookAddedEvent(currentUser.id, result.id),
+    );
     return result;
   }
 

@@ -13,6 +13,7 @@ import { BookDto } from './dtos/book.dto';
 import { BooksService } from './books.service';
 import { Request } from 'express';
 import { FilterBooksDto } from './dtos/filter-books.dto';
+import { BookExchangeState } from './entities/book.entity';
 
 @Controller('books')
 export class BooksController {
@@ -57,6 +58,14 @@ export class BooksController {
   async show(@Req() req: Request, @Param('id') bookId: number) {
     const book = await this.booksService.findOne(bookId);
     return { book, isOwner: book.owner.id === req.currentUser.id };
+  }
+
+  @Get(':id/make-available')
+  async makeAvailable(@Req() req: Request, @Param('id') bookId: number) {
+    return await this.booksService.changeState(
+      bookId,
+      BookExchangeState.available,
+    );
   }
 
   @Delete(':id')

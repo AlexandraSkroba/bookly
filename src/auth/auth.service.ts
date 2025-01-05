@@ -46,7 +46,7 @@ export class AuthService {
 
   async authorizeUser(
     credentials: SignInDto,
-  ): Promise<{ access_token: string, user: Object }> {
+  ): Promise<{ access_token: string; user: Object }> {
     const user = await this.UsersService.authenticate(credentials);
     const payload = {
       sub: user.id,

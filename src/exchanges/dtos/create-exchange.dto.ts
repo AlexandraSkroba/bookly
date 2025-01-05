@@ -5,4 +5,7 @@ export class CreateExchangeDto {
   @IsNotEmpty()
   @ApiProperty()
   bookId: number;
+
+  @ApiProperty()
+  details: string;
 }
