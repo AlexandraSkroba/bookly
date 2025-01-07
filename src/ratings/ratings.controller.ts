@@ -5,15 +5,15 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
 } from '@nestjs/common';
 import { RatingsService } from './ratings.service';
 import { Request } from 'express';
 import { CreateRatingDTO } from './dots/create-rating.dto';
 import { UpdateRatingDTO } from './dots/update-rating.dto';
-import { FindRatingDTO } from './dots/find-rating.dto';
+import { RatingTarget } from './entities/rating.entity';
 
 @Controller('ratings')
 export class RatingsController {
@@ -22,11 +22,6 @@ export class RatingsController {
   @Get()
   async index() {
     return await this.ratingsService.findAll();
-  }
-
-  @Post('by-target')
-  async targetRatings(@Body() params: FindRatingDTO) {
-    return await this.ratingsService.findByTarget(params);
   }
 
   @Post()
@@ -39,7 +34,12 @@ export class RatingsController {
     return await this.ratingsService.findOne(id);
   }
 
-  @Put(':id')
+  @Get(':targetType/:id')
+  async findByTarget(@Req() req: Request, @Param('targetType') targetType: RatingTarget, @Param('id') id: number) {
+    return await this.ratingsService.findByTarget({ targetType, targetId: id });
+  }
+
+  @Patch(':id')
   async update(
     @Req() req: Request,
     @Param('id') id: number,
