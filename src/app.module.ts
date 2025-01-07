@@ -14,6 +14,7 @@ import { RatingsModule } from './ratings/ratings.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { MessagesModule } from './messages/messages.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { DialogsModule } from './dialogs/dialogs.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     NotificationsModule,
     MessagesModule,
     SubscriptionsModule,
+    DialogsModule,
   ],
   controllers: [AppController],
 })

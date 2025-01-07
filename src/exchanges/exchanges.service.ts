@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExchangeEntity, ExchangeState } from './entities/exchange.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateExchangeDto } from './dtos/create-exchange.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { BookEntity, BookExchangeState } from 'src/books/entities/book.entity';
@@ -67,8 +67,11 @@ export class ExchangesService {
     }
 
     const existingExchange = await this.exchangesRepository.findOne({
-      where: { book: { id: book.id }, to: { id: to.id } },
-      relations: ['book', 'to'],
+      where: {
+        state: In([ExchangeState.preparation, ExchangeState.approved]),
+        book: { id: book.id },
+        to: { id: to.id },
+      },
     });
     if (existingExchange) {
       throw new ConflictException('Exchange already created');
@@ -135,7 +138,7 @@ export class ExchangesService {
     if (state === ExchangeState.approved || state === ExchangeState.declined) {
       exchange = await this.exchangesRepository.findOne({
         where: { id, from: { id: user.id } },
-        relations: ['book', 'from', 'to'],
+        relations: ['book', 'from', 'to', 'dialog'],
       });
 
       if (!exchange) {
@@ -150,10 +153,13 @@ export class ExchangesService {
       }
 
       this.booksService.changeState(exchange.book.id, bookState);
+      if (state === ExchangeState.declined) {
+        this.dialogsService.removeSubject(exchange.dialog, exchange);
+      }
     } else {
       exchange = await this.exchangesRepository.findOne({
         where: { id },
-        relations: ['book', 'to', 'from'],
+        relations: ['book', 'to', 'from', 'dialog'],
       });
 
       if (!exchange) {
@@ -177,8 +183,10 @@ export class ExchangesService {
   }
 
   async completeExchange(exchange: ExchangeEntity) {
-    console.log(exchange);
     this.booksService.changeOwner(exchange.book.id, exchange.to);
+
+    console.log(exchange);
+    this.dialogsService.removeSubject(exchange.dialog, exchange);
     return await this.booksService.changeState(
       exchange.book.id,
       BookExchangeState.exchanged,
