@@ -10,13 +10,24 @@ import { MessagesController } from './messages.controller';
 import { MessagesGateway } from './messages.gateway';
 import { UsersService } from 'src/users/users.service';
 import { BullModule } from '@nestjs/bull';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MessagesListener } from './messages.listener';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Dialog, Message, UserEntity, ExchangeEntity]),
     BullModule.registerQueue({ name: 'email' }),
+    EventEmitterModule.forRoot({
+      delimiter: '.',
+    }),
   ],
-  providers: [MessagesService, DialogsService, UsersService, MessagesGateway],
+  providers: [
+    MessagesService,
+    DialogsService,
+    UsersService,
+    MessagesGateway,
+    MessagesListener,
+  ],
   controllers: [MessagesController],
 })
 export class MessagesModule {}

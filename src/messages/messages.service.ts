@@ -7,6 +7,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MessageSentEvent } from 'src/notifications/events/message-sent.event';
 import { Dialog } from 'src/dialogs/entities/dialog.entity';
+import { NewMessageEvent } from './events/new-message.event';
 
 @Injectable()
 export class MessagesService {
@@ -20,9 +21,17 @@ export class MessagesService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  async find(dialogId: number) {
+    return await this.messagesRepository.find({
+      where: { dialog: { id: dialogId } },
+      relations: ['author'],
+      order: { createdAt: 'asc' },
+    });
+  }
+
   async create(
     params: CreateMessageDto,
-    currentUser,
+    currentUser: UserEntity,
     dialog: Dialog = null,
     pushNotification: boolean = true,
   ) {
@@ -32,6 +41,7 @@ export class MessagesService {
       }
       dialog = await this.dialogsRepository.findOne({
         where: { id: params.dialogId },
+        relations: ['users'],
       });
     }
 
@@ -55,7 +65,10 @@ export class MessagesService {
         ),
       );
     }
-    return await this.messagesRepository.save(newMessage);
+
+    const result = await this.messagesRepository.save(newMessage);
+    this.eventEmitter.emit('new.message', new NewMessageEvent(result.id));
+    return result;
   }
 
   async registerSocket(userId: number, messagesSocketId: string) {
