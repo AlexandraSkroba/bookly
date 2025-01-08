@@ -15,6 +15,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { MessagesModule } from './messages/messages.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { DialogsModule } from './dialogs/dialogs.module';
+import { ComplainsModule } from './complains/complains.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { DialogsModule } from './dialogs/dialogs.module';
     MessagesModule,
     SubscriptionsModule,
     DialogsModule,
+    ComplainsModule
   ],
   controllers: [AppController],
 })

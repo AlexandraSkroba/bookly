@@ -31,7 +31,7 @@ export class RatingsService {
   async findOne(id: number) {
     const rating = await this.ratingsRepository.findOne({
       where: { id },
-      relations: [''],
+      relations: ['owner', 'complain'],
     });
     const target = await this.loadTarget(rating.targetType, rating.targetId);
     return { ...rating, target };
@@ -48,7 +48,7 @@ export class RatingsService {
   }
 
   async findByTarget(params: FindRatingDTO) {
-    return this.ratingsRepository.find({ where: params });
+    return this.ratingsRepository.find({ where: params, relations: ['owner', 'complain'] });
   }
 
   async create(ownerId, params: CreateRatingDTO) {
