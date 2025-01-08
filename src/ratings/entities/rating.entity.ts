@@ -1,12 +1,12 @@
+import { Complain } from 'src/complains/entities/complain.entity';
 import { BasicEntity } from 'src/database/entities/basic.entity';
 import { ExchangeEntity } from 'src/exchanges/entities/exchange.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 
 export enum RatingTarget {
   'exchange' = 'exchange',
-  'book' = 'book',
-  'user' = 'user',
+  'book' = 'book'
 }
 
 @Entity('ratings')
@@ -26,4 +26,8 @@ export class RatingEntity extends BasicEntity {
 
   @Column({ type: 'integer' })
   targetId: number;
+
+  @OneToOne(() => Complain, (complain) => complain.rating, { nullable: true })
+  @JoinColumn({ name: 'complain_id'})
+  complain: Complain;
 }

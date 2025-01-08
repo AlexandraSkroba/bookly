@@ -13,7 +13,6 @@ import { UsersService } from 'src/users/users.service';
 import { UpdateRatingDTO } from './dots/update-rating.dto';
 import { CreateRatingDTO } from './dots/create-rating.dto';
 import { FindRatingDTO } from './dots/find-rating.dto';
-import { UserEntity } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class RatingsService {
@@ -32,7 +31,7 @@ export class RatingsService {
   async findOne(id: number) {
     const rating = await this.ratingsRepository.findOne({
       where: { id },
-      relations: ['owner'],
+      relations: ['owner', 'complain'],
     });
     const target = await this.loadTarget(rating.targetType, rating.targetId);
     return { ...rating, target };
@@ -49,7 +48,7 @@ export class RatingsService {
   }
 
   async findByTarget(params: FindRatingDTO) {
-    return this.ratingsRepository.find({ where: params, relations: ['owner'] });
+    return this.ratingsRepository.find({ where: params, relations: ['owner', 'complain'] });
   }
 
   async create(ownerId, params: CreateRatingDTO) {
