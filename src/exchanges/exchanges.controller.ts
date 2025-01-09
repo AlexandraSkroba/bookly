@@ -41,6 +41,11 @@ export class ExchangesController {
     return await this.exchangesService.updateState(id, params, req.currentUser);
   }
 
+  @Get('delivery-state/:id')
+  async getDeliveryState(@Param('id') id: number) {
+    return await this.exchangesService.getDeliveryState(id);
+  }
+
   @Delete(':id')
   async destroy(@Req() req: Request, @Param('id') id: number) {
     return await this.exchangesService.delete(id, req.currentUser);
