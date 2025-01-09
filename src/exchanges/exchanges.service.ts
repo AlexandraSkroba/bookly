@@ -16,6 +16,7 @@ import { ExchangeOfferedEvent } from 'src/notifications/events/exchange-offered.
 import { UpdateStateDto } from './dtos/update-state.dto';
 import { ExchangeUpdatedEvent } from 'src/notifications/events/exchange-updated.event';
 import { MessagesService } from 'src/messages/messages.service';
+import axios from 'axios';
 
 @Injectable()
 export class ExchangesService {
@@ -138,7 +139,7 @@ export class ExchangesService {
     if (state === ExchangeState.approved || state === ExchangeState.declined) {
       exchange = await this.exchangesRepository.findOne({
         where: { id, from: { id: user.id } },
-        relations: ['book', 'from', 'to', 'dialog'],
+        relations: ['book', 'from', 'to', 'dialog.subjects'],
       });
 
       if (!exchange) {
@@ -148,6 +149,7 @@ export class ExchangesService {
       let bookState: BookExchangeState;
       if (state === ExchangeState.approved) {
         bookState = BookExchangeState['in exchange'];
+        this.createDelivery(exchange);
       } else {
         bookState = BookExchangeState['available'];
       }
@@ -159,7 +161,7 @@ export class ExchangesService {
     } else {
       exchange = await this.exchangesRepository.findOne({
         where: { id },
-        relations: ['book', 'to', 'from', 'dialog'],
+        relations: ['book', 'to', 'from', 'dialog.subjects'],
       });
 
       if (!exchange) {
@@ -184,13 +186,32 @@ export class ExchangesService {
 
   async completeExchange(exchange: ExchangeEntity) {
     this.booksService.changeOwner(exchange.book.id, exchange.to);
-
-    console.log(exchange);
-    this.dialogsService.removeSubject(exchange.dialog, exchange);
+    if (exchange.dialog) {
+      this.dialogsService.removeSubject(exchange.dialog, exchange);
+    }
+    this.deleteDelivery(exchange);
     return await this.booksService.changeState(
       exchange.book.id,
       BookExchangeState.exchanged,
     );
+  }
+
+  async createDelivery(exchange: ExchangeEntity) {
+    const data = {
+      bookId: exchange.book.id
+    }
+    await axios.post(process.env.DELIVERY_API, data);
+  }
+
+  async getDeliveryState(id: number) {
+    const exchange = await this.exchangesRepository.findOne({ where: { id }, relations: ['book'] })
+
+    const response = await axios.get(process.env.DELIVERY_API, { params: { bookId: exchange.book.id } });
+    return response.data
+  }
+
+  async deleteDelivery(exchange: ExchangeEntity) {
+    axios.delete(process.env.DELIVERY_API, { params: { bookId: exchange.book.id } });
   }
 
   async delete(id: number, to: UserEntity) {
