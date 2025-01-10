@@ -45,7 +45,7 @@ import { ComplainsModule } from './complains/complains.module';
     MessagesModule,
     SubscriptionsModule,
     DialogsModule,
-    ComplainsModule
+    ComplainsModule,
   ],
   controllers: [AppController],
 })

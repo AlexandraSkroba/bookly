@@ -68,6 +68,12 @@ export class UserEntity extends BasicEntity {
   @Column({ nullable: true })
   messagesSocketId: string;
 
+  @Column({ type: 'boolean', nullable: true })
+  isAdmin: boolean;
+
+  @Column({ type: 'boolean', nullable: true })
+  isSuspended: boolean;
+
   @ManyToMany(() => Dialog, (dialog) => dialog.users)
   dialogs: Dialog[];
 

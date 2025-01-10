@@ -198,20 +198,27 @@ export class ExchangesService {
 
   async createDelivery(exchange: ExchangeEntity) {
     const data = {
-      bookId: exchange.book.id
-    }
+      bookId: exchange.book.id,
+    };
     await axios.post(process.env.DELIVERY_API, data);
   }
 
   async getDeliveryState(id: number) {
-    const exchange = await this.exchangesRepository.findOne({ where: { id }, relations: ['book'] })
+    const exchange = await this.exchangesRepository.findOne({
+      where: { id },
+      relations: ['book'],
+    });
 
-    const response = await axios.get(process.env.DELIVERY_API, { params: { bookId: exchange.book.id } });
-    return response.data
+    const response = await axios.get(process.env.DELIVERY_API, {
+      params: { bookId: exchange.book.id },
+    });
+    return response.data;
   }
 
   async deleteDelivery(exchange: ExchangeEntity) {
-    axios.delete(process.env.DELIVERY_API, { params: { bookId: exchange.book.id } });
+    axios.delete(process.env.DELIVERY_API, {
+      params: { bookId: exchange.book.id },
+    });
   }
 
   async delete(id: number, to: UserEntity) {

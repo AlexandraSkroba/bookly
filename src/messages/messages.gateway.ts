@@ -36,13 +36,11 @@ export class MessagesGateway implements OnModuleInit {
 
   async handleMessage(socketIds: string[], message: Message) {
     socketIds.map((id, _i) => {
-      this.server
-        .to(id)
-        .emit('new.message', {
-          id: message.id,
-          text: message.text,
-          author: message.author,
-        });
+      this.server.to(id).emit('new.message', {
+        id: message.id,
+        text: message.text,
+        author: message.author,
+      });
     });
   }
 }

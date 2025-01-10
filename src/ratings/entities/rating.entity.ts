@@ -6,7 +6,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 
 export enum RatingTarget {
   'exchange' = 'exchange',
-  'book' = 'book'
+  'book' = 'book',
 }
 
 @Entity('ratings')
@@ -28,6 +28,6 @@ export class RatingEntity extends BasicEntity {
   targetId: number;
 
   @OneToOne(() => Complain, (complain) => complain.rating, { nullable: true })
-  @JoinColumn({ name: 'complain_id'})
+  @JoinColumn({ name: 'complain_id' })
   complain: Complain;
 }
