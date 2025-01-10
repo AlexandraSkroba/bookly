@@ -16,6 +16,7 @@ import { MessagesModule } from './messages/messages.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { DialogsModule } from './dialogs/dialogs.module';
 import { ComplainsModule } from './complains/complains.module';
+import { AdminsModule } from './admin/admins.module';
 
 @Module({
   imports: [
@@ -45,7 +46,8 @@ import { ComplainsModule } from './complains/complains.module';
     MessagesModule,
     SubscriptionsModule,
     DialogsModule,
-    ComplainsModule
+    ComplainsModule,
+    AdminsModule
   ],
   controllers: [AppController],
 })

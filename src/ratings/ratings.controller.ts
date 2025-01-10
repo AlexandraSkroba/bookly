@@ -35,7 +35,11 @@ export class RatingsController {
   }
 
   @Get(':targetType/:id')
-  async findByTarget(@Req() req: Request, @Param('targetType') targetType: RatingTarget, @Param('id') id: number) {
+  async findByTarget(
+    @Req() req: Request,
+    @Param('targetType') targetType: RatingTarget,
+    @Param('id') id: number,
+  ) {
     return await this.ratingsService.findByTarget({ targetType, targetId: id });
   }
 

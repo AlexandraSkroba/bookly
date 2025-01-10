@@ -3,7 +3,14 @@ import { BasicEntity } from 'src/database/entities/basic.entity';
 import { Dialog } from 'src/dialogs/entities/dialog.entity';
 import { RatingEntity } from 'src/ratings/entities/rating.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 export enum ExchangeState {
   preparation = 'preparation',
