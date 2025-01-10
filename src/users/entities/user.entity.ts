@@ -69,10 +69,10 @@ export class UserEntity extends BasicEntity {
   messagesSocketId: string;
 
   @Column({ type: 'boolean', nullable: true })
-  isAdmin: boolean;
+  is_admin: boolean;
 
-  @Column({ type: 'boolean', nullable: true })
-  isSuspended: boolean;
+  @Column({ type: 'boolean', nullable: true, default: false })
+  is_suspended: boolean;
 
   @ManyToMany(() => Dialog, (dialog) => dialog.users)
   dialogs: Dialog[];
@@ -84,7 +84,7 @@ export class UserEntity extends BasicEntity {
   subscriptions: Subscription[];
 
   @Column({ type: 'boolean', default: false })
-  notifyByEmail: boolean;
+  notify_by_email: boolean;
 
   @BeforeInsert()
   async encryptPassword() {

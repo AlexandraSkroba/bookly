@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { SignInDto } from 'src/auth/dtos/sign-in.dto';
@@ -105,7 +105,7 @@ export class UsersService {
     const user = await this.findOne({
       where: {
         isConfirmed: true,
-        isSuspended: Not(true),
+        is_suspended: Not(true),
         email: credentials.email,
       },
     });

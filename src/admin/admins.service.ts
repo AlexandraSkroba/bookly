@@ -27,7 +27,7 @@ export class AdminsService {
   }
 
   async getBooks() {
-    return await this.bookRepository.find();
+    return await this.bookRepository.find({ relations: ['owner']});
   }
 
   async getExchanges() {
@@ -36,12 +36,16 @@ export class AdminsService {
     });
   }
 
-  async getComplains() {
+  async getComplaints() {
     return await this.complainsRepository.find({ relations: ['rating'] });
   }
 
   async suspendUser(params: SuspendUserDto) {
-    return await this.usersRepository.update(params.id, { isSuspended: false });
+    return await this.usersRepository.update(params.id, { is_suspended: true });
+  }
+
+  async unsuspendUser(params: SuspendUserDto) {
+    return await this.usersRepository.update(params.id, { is_suspended: false });
   }
 
   async satisfyComplaint(params: SatisfyComplaintDto) {
@@ -54,5 +58,9 @@ export class AdminsService {
 
   async deleteExchange(id: number) {
     return await this.exchangeRepository.delete(id);
+  }
+
+  async deleteBook(id: number) {
+    return await this.bookRepository.delete(id);
   }
 }

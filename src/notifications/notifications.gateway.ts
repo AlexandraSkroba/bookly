@@ -51,7 +51,7 @@ export class NotificationsGateway implements OnModuleInit {
 
   async notifyByEmail(userIds: number[], subject: string, message: string) {
     const users = await this.usersService.find({
-      where: { id: In(userIds), notifyByEmail: true },
+      where: { id: In(userIds), notify_by_email: true },
     });
     users.forEach((user) => {
       let data = {

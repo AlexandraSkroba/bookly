@@ -6,6 +6,7 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { AdminsService } from './admins.service';
 import { Complain } from 'src/complains/entities/complain.entity';
 import { AdminMiddleware } from './admin.middleware';
+import { AdminsController } from './admins.controller';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AdminMiddleware } from './admin.middleware';
     ]),
   ],
   providers: [AdminsService],
-  controllers: [],
+  controllers: [AdminsController],
 })
 export class AdminsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

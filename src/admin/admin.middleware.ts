@@ -16,7 +16,7 @@ export class AdminMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    if (!req.currentUser.isAdmin) {
+    if (!req.currentUser.is_admin) {
       throw new UnauthorizedException("You don't have acces to this section");
     }
 
