@@ -4,7 +4,7 @@ import { NotificationsService } from './notifications.service';
 import { NotificationsGateway } from './notifications.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
-import { BullModule } from '@nestjs/bullmq';
+import { BullModule } from '@nestjs/bull';
 import { UsersService } from 'src/users/users.service';
 import { BooksService } from 'src/books/books.service';
 import { UserEntity } from 'src/users/entities/user.entity';

@@ -30,7 +30,7 @@ import { AdminsModule } from './admin/admins.module';
     RatingsModule,
     BullModule.forRoot({
       redis: {
-        host: process.env.REDIS_HOST || 'localhost',
+        host: process.env.REDIS_HOST || 'maddison',
         port: parseInt(process.env.REDIS_PORT) || 6379,
       },
     }),

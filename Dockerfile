@@ -7,5 +7,5 @@ RUN npm install
 ARG DEFAULT_PORT 3001
 
 EXPOSE ${DEFAULT_PORT}
-RUN npm run db:create
+
 CMD ["npm", "run", "start"]
