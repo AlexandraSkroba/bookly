@@ -7,8 +7,12 @@ import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import * as express from 'express';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import {createDatabase} from "typeorm-extension";
+import { createDBIfNotExists } from './create-db';
 
 async function bootstrap() {
+  await createDBIfNotExists()
+
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: '*',

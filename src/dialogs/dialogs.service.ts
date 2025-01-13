@@ -114,3 +114,8 @@ export class DialogsService {
     return await this.dialogsRepository.save(dialog);
   }
 }
+
+'SELECT "d"."id" FROM dialogs AS d \
+        INNER JOIN dialogs_users_users AS du ON "du"."dialogsId"="d"."id" \
+        INNER JOIN users AS u ON "du"."usersId" = "u"."id" \
+        WHERE "du"."usersId" IN (38, 41);'
