@@ -5,14 +5,25 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class NewPasswordDto {
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'resetToken123',
+    description: 'The token used for password reset',
+  })
   resetPasswordToken: string;
 
   @IsStrongPassword()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'NewStrongPassword123!',
+    description:
+      'The new password for the user (must meet strength requirements)',
+  })
   newPassword: string;
 
   @Match('newPassword')
-  @ApiProperty()
+  @ApiProperty({
+    example: 'NewStrongPassword123!',
+    description:
+      'Confirmation of the new password (must match the new password)',
+  })
   newPasswordConfirmation: string;
 }

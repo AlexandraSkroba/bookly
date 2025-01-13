@@ -3,6 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class RecoverPasswordDto {
   @IsEmail()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'johndoe@example.com',
+    description: 'The email address of the user requesting password recovery',
+  })
   email: string;
 }

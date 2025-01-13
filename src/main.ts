@@ -22,9 +22,13 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Bookly')
-    .setDescription('Book exchange service')
+    .setDescription(
+      'The platform allows users to exchange books, discover new works, and share favorite titles with others. ' +
+        'Users can list their books for exchange, search for desired titles, and interact with other community members. ' +
+        'After exchanging books, users can leave reviews about the books and the exchange experience, fostering a trustworthy and high-quality community. ' +
+        'The platform also provides book tracking for exchanges, ensuring security and confidence, especially for users sending books to other cities or countries.',
+    )
     .setVersion('1.0')
-    .addTag('books')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

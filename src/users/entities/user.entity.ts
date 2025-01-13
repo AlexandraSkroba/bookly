@@ -7,7 +7,6 @@ import {
   BeforeInsert,
   OneToMany,
   ManyToMany,
-  JoinTable,
 } from 'typeorm';
 import { v4 } from 'uuid';
 import { BookEntity } from 'src/books/entities/book.entity';

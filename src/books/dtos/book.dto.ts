@@ -4,30 +4,52 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class BookDto {
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'To Kill a Mockingbird',
+    description: 'The title of the book',
+  })
   title: string;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Harper Lee',
+    description: 'The author of the book',
+  })
   author: string;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Fiction',
+    description: 'The genre of the book',
+  })
   genre: string;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'English',
+    description: 'The language in which the book is written',
+  })
   language: string;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'Good',
+    description: 'The condition of the book (e.g., new, good, used)',
+    enum: BookCondition,
+  })
   condition: BookCondition;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'United States',
+    description: 'The country where the book is available',
+  })
   country: string;
 
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'New York',
+    description: 'The city where the book is located',
+  })
   city: string;
 }
