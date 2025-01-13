@@ -27,7 +27,7 @@ export class AdminsService {
   }
 
   async getBooks() {
-    return await this.bookRepository.find({ relations: ['owner']});
+    return await this.bookRepository.find({ relations: ['owner'] });
   }
 
   async getExchanges() {
@@ -45,7 +45,9 @@ export class AdminsService {
   }
 
   async unsuspendUser(params: SuspendUserDto) {
-    return await this.usersRepository.update(params.id, { is_suspended: false });
+    return await this.usersRepository.update(params.id, {
+      is_suspended: false,
+    });
   }
 
   async satisfyComplaint(params: SatisfyComplaintDto) {

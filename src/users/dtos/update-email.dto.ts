@@ -3,6 +3,9 @@ import { IsEmail } from 'class-validator';
 
 export class UpdateEmailDto {
   @IsEmail()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'newemail@example.com',
+    description: 'The new email address for the user',
+  })
   email: string;
 }

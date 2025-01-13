@@ -47,7 +47,7 @@ import { AdminsModule } from './admin/admins.module';
     SubscriptionsModule,
     DialogsModule,
     ComplainsModule,
-    AdminsModule
+    AdminsModule,
   ],
   controllers: [AppController],
 })
