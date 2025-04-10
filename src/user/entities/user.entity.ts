@@ -8,6 +8,6 @@ export class UserEntity {
     @Column({ type: 'varchar', length: 320 })
     email: string;
 
-    @Column({ type: 'varchar' })
-    password: string;
+    @Column({ type: 'varchar', nullable: true })
+    password: string | null;
 }

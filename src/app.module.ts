@@ -3,6 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
         synchronize: true,
       }),
     }),
+    PassportModule.register({ session: true }),
     AuthModule,
     UserModule
   ],

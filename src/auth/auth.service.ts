@@ -1,15 +1,14 @@
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { USER_REPOSITORY } from "src/constants";
-import { CreateUserInterface } from "src/user/interfaces/create-user.interface";
+import { CreateGoogleUserInterface, CreateUserInterface } from "src/user/interfaces/create-user.interface";
 import { UserRepository } from "src/user/user.repository";
 import * as argon2 from "argon2";
 
 @Injectable()
 export class AuthService {
-    constructor(@Inject(USER_REPOSITORY) private userRepository: UserRepository, private configService: ConfigService) { }
+    constructor(@Inject(USER_REPOSITORY) private userRepository: UserRepository) { }
     async signUp(user: CreateUserInterface) {
-        const existUser = await this.userRepository.findByEmail(user)
+        const existUser = await this.userRepository.findByEmail(user.email)
         if (existUser) throw new BadRequestException('This email already exist')
 
 
@@ -20,5 +19,21 @@ export class AuthService {
 
         await this.userRepository.createAndSave(newUser)
         return { message: "User registered successfully", newUser: newUser }
+    }
+
+    async validateUser(user: CreateGoogleUserInterface) {
+        const existUser = await this.userRepository.findByEmail(user.email)
+        if (existUser) throw new BadRequestException('This email already exist')
+
+        if (existUser) {
+            return user
+        }
+        const newUser = await this.userRepository.createAndSave(user)
+        return newUser
+    }
+
+    async findUser(id: number) {
+        const user = await this.userRepository.findById(id)
+        return user
     }
 }
