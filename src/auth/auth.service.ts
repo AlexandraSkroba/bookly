@@ -1,12 +1,30 @@
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import { BadRequestException, Dependencies, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { USER_REPOSITORY } from "src/constants";
 import { CreateGoogleUserInterface, CreateUserInterface } from "src/user/interfaces/create-user.interface";
 import { UserRepository } from "src/user/user.repository";
 import * as argon2 from "argon2";
+import { UserService } from "../user/user.service";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
-    constructor(@Inject(USER_REPOSITORY) private userRepository: UserRepository) { }
+    constructor(
+        @Inject(USER_REPOSITORY) 
+        private userRepository: UserRepository, 
+        private userService: UserService, 
+        private jwtService: JwtService
+    ) {}
+    async signIn(email, pass) {
+        const user = await this.userService.findOne(email);
+        if (!user || user.password !== pass) throw new UnauthorizedException();
+        
+        const payload = { email: user.email, sub: user.id };
+        
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+        };
+    }
+
     async signUp(user: CreateUserInterface) {
         const existUser = await this.userRepository.findByEmail(user.email)
         if (existUser) throw new BadRequestException('This email already exist')
