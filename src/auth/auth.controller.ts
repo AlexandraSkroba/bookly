@@ -10,7 +10,7 @@ import { AuthGuard } from "./auth.guard";
 export class AuthController {
     constructor(@Inject(AUTH_SERVICE) private authService: AuthService) { }
 
-    // login
+    // auth/login
     @HttpCode(HttpStatus.OK)
     @Post('login')
     signIn(@Body() signInDto: Record<string, any>) {
