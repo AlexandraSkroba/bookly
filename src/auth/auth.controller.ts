@@ -5,26 +5,32 @@ import { AuthService } from "./auth.service";
 import { GoogleAuthGuard } from "./utils/guards";
 import { Request } from "express";
 import { AuthGuard } from "./auth.guard";
+import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiOAuth2 } from "@nestjs/swagger";
 
 @Controller('auth')
+@UsePipes(ValidationPipe)
 export class AuthController {
     constructor(@Inject(AUTH_SERVICE) private authService: AuthService) { }
 
-    // auth/login
+
+    // auth/signin
     @HttpCode(HttpStatus.OK)
-    @Post('login')
-    signIn(@Body() signInDto: Record<string, any>) {
-      return this.authService.signIn(signInDto.username, signInDto.password);
+    @Post('signin')
+    async signIn(@Body() userData: CreateUserDto) {
+      return {
+        access_token: await this.authService.signIn(userData)
+      }
     }
 
     // auth/signup
     @Post('signup')
-    @UsePipes(new ValidationPipe())
     async signUp(@Body() createUserDto: CreateUserDto) {
-        return this.authService.signUp(createUserDto)
+        return {
+            access_token: await this.authService.signUp(createUserDto)
+        }
     }
 
-    // auth/google/login
+    // auth/google/login FIXME
     @Get('google/login')
     @UseGuards(GoogleAuthGuard)
     handleLogin() {
@@ -33,6 +39,7 @@ export class AuthController {
 
     // auth/google/redirect
     @Get('google/redirect')
+    @ApiExcludeEndpoint(true) // Exclude from Swagger
     @UseGuards(GoogleAuthGuard)
     handleRedirect() {
         return { msg: 'OK' };
@@ -40,11 +47,13 @@ export class AuthController {
 
     // auth/status
     @UseGuards(AuthGuard)
+    @ApiBearerAuth('access-token')
+    @ApiOAuth2(['bookly:write'])
     @Get('status')
     user(@Req() request: Request) {
         console.log(request.user);
         if (request.user) {
-            return { msg: 'Authenticated' };
+            return { msg: 'Authenticated', user: request.user };
         } else {
             return { msg: 'Not Authenticated' };
         }
