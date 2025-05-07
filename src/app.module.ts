@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { UserService } from './user/user.service';
+import { MailerService } from './mailer/mailer.service';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { UserService } from './user/user.service';
     AuthModule,
     UserModule
   ],
-  providers: [UserService],
+  providers: [UserService, MailerService],
   exports: [UserService]
 })
 export class AppModule { }
