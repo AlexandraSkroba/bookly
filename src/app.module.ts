@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { UserService } from './user/user.service';
 import { MailerService } from './mailer/mailer.service';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { MailerService } from './mailer/mailer.service';
     }),
     PassportModule.register({ session: true }),
     AuthModule,
-    UserModule
+    UserModule,
+    MailerModule
   ],
   providers: [UserService, MailerService],
   exports: [UserService]
