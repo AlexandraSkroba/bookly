@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Req, UseGuards, UsePipes, ValidationPipe, Query } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Inject, Post, Req, UseGuards, UsePipes, ValidationPipe, Query, Redirect } from "@nestjs/common";
 import { AUTH_SERVICE } from "src/constants";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { AuthService } from "./auth.service";
@@ -31,11 +31,16 @@ export class AuthController {
     }
 
 
-    @Post('confirm-email')
-        async confirmEmail(@Query('token') token: string) {
+    @Get('confirm-email')
+    @Redirect()
+    async confirmEmail(@Query('token') token: string) {
         const payload = await this.authService.verifyEmailConfirmationToken(token);
         await this.authService.confirmEmail(payload.email);
-        return { message: 'Email confirmed successfully' };
+        return { 
+            url: `${process.env.FRONTEND_URL}/login`, 
+            statusCode: 302,
+            message: 'Email confirmed successfully' 
+        };
     }
 
     // auth/google/login FIXME

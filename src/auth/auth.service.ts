@@ -40,7 +40,8 @@ export class AuthService {
         });
     
         const token = await this.generateEmailConfirmationToken(newUser.email);
-        const confirmationUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${token}`;
+        const backendUrl = process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3001}`;
+        const confirmationUrl = `${backendUrl}/auth/confirm-email?token=${token}`;
     
         await this.mailerService.sendEmail(
             newUser.email,
