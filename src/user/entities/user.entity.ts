@@ -1,16 +1,22 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('users')
 export class UserEntity {
     @PrimaryGeneratedColumn()
-    id: number;
+    id: number
 
     @Column({ type: 'varchar', length: 320 })
-    email: string;
+    email: string
 
     @Column({ default: false })
-    public isEmailConfirmed: boolean;
+    public isEmailConfirmed: boolean
 
     @Column({ type: 'varchar', nullable: true })
-    password: string | null;
+    password: string | null
+
+    @Column({ type: 'varchar', nullable: true })
+    passwordRecoveryToken: string | null // Token for password recovery
+
+    @Column({ type: 'timestamp', nullable: true })
+    passwordRecoveryTokenExpires: Date | null // Expiration time for the token
 }

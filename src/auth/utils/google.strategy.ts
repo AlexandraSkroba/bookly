@@ -1,9 +1,9 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { PassportStrategy } from "@nestjs/passport";
-import { Profile, Strategy } from "passport-google-oauth20";
-import { AuthService } from "../auth.service";
-import { AUTH_SERVICE } from "src/constants";
-import { ConfigService } from "@nestjs/config";
+import { Inject, Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
+import { Profile, Strategy } from 'passport-google-oauth20'
+import { AuthService } from '../auth.service'
+import { AUTH_SERVICE } from 'src/constants'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
@@ -16,8 +16,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL')
 
         if (!clientID) throw new Error('GOOGLE_CLIENT_ID is not defined in env')
-        if (!clientSecret) throw new Error('GOOGLE_CLIENT_SECRET is not defined in env')
-        if (!callbackURL) throw new Error('GOOGLE_CALLBACK_URL is not defined in env')
+        if (!clientSecret)
+            throw new Error('GOOGLE_CLIENT_SECRET is not defined in env')
+        if (!callbackURL)
+            throw new Error('GOOGLE_CALLBACK_URL is not defined in env')
 
         super({
             clientID,
@@ -27,18 +29,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         })
     }
 
-    async validate(accessToken: string, refreshToken: string, profile: Profile) {
-        console.log(accessToken);
-        console.log(refreshToken);
-        console.log(profile);
+    async validate(
+        accessToken: string,
+        refreshToken: string,
+        profile: Profile,
+    ) {
+        console.log(accessToken)
+        console.log(refreshToken)
+        console.log(profile)
 
-        const email = profile.emails?.[0]?.value;
+        const email = profile.emails?.[0]?.value
         if (!email) {
-            throw new Error('Google account does not have an email');
+            throw new Error('Google account does not have an email')
         }
-        const user = await this.authService.validateUser({ email });
-        console.log('Validate');
-        console.log(user);
-        return user || null;
+        const user = await this.authService.validateUser({ email })
+        console.log('Validate')
+        console.log(user)
+        return user || null
     }
 }

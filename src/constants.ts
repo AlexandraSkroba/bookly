@@ -1,2 +1,2 @@
 export const AUTH_SERVICE = 'AuthService'
-export const USER_REPOSITORY = 'UserRepository';
+export const USER_REPOSITORY = 'UserRepository'
