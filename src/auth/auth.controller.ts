@@ -27,9 +27,9 @@ import { ApiBearerAuth, ApiExcludeEndpoint, ApiOAuth2 } from '@nestjs/swagger'
 export class AuthController {
     constructor(@Inject(AUTH_SERVICE) private authService: AuthService) {}
 
-    // auth/signin
+    // auth/login
     @HttpCode(HttpStatus.OK)
-    @Post('signin')
+    @Post('login')
     async signIn(@Body() userData: CreateUserDto) {
         return {
             access_token: await this.authService.signIn(userData),
