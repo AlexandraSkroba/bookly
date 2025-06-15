@@ -19,4 +19,10 @@ export class UserEntity {
 
     @Column({ type: 'timestamp', nullable: true })
     passwordRecoveryTokenExpires: Date | null // Expiration time for the token
+
+    @Column({ type: 'varchar', nullable: true })
+    avatar: string | null
+
+    @Column({ type: 'simple-array', nullable: true })
+    preferences: string[] | null
 }

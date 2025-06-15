@@ -4,9 +4,11 @@ import { ValidationPipe } from '@nestjs/common'
 import * as session from 'express-session'
 import * as passport from 'passport'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import { join } from 'path'
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule)
+    const app = await NestFactory.create<NestExpressApplication>(AppModule)
     app.enableCors({
         origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -27,7 +29,12 @@ async function bootstrap() {
     app.use(passport.initialize())
     app.use(passport.session())
 
+    app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+        prefix: '/uploads/',
+    })
+
     const config = new DocumentBuilder()
+        .setTitle('Bookly API')
         .setTitle('Bookly API')
         .setVersion('1.0.0')
         .addOAuth2()

@@ -49,19 +49,24 @@ export class AuthService {
             password: await argon2.hash(userData.password),
         })
 
-        const token = await this.generateEmailConfirmationToken(newUser.email)
+        void this.sendEmailConfirmation(newUser.email)
+
+        return 'Please check your email to confirm your account'
+    }
+
+    async sendEmailConfirmation(email: string): Promise<void> {
+        const token = await this.generateEmailConfirmationToken(email)
+
         const backendUrl =
             process.env.BACKEND_URL ||
             `http://localhost:${process.env.PORT || 3001}`
         const confirmationUrl = `${backendUrl}/auth/confirm-email?token=${token}`
 
         await this.mailerService.sendEmail(
-            newUser.email,
+            email,
             'Confirm your email',
             `Click the link to confirm your email: ${confirmationUrl}`,
         )
-
-        return 'Please check your email to confirm your account'
     }
 
     async generateEmailConfirmationToken(email: string): Promise<string> {

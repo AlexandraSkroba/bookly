@@ -1,5 +1,5 @@
+import 'dotenv/config'
 import { Module } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { JwtModule } from '@nestjs/jwt'
 import { AUTH_SERVICE } from 'src/constants'
 import { AuthService } from './auth.service'
@@ -16,16 +16,12 @@ import { MailerModule } from 'src/mailer/mailer.module'
         TypeOrmModule.forFeature([UserEntity]),
         UserModule,
         MailerModule,
-        JwtModule.registerAsync({
-            // imports: [ConfigModule], // Import ConfigModule if not already imported FIXME
-            useFactory: (configService: ConfigService) => ({
-                global: true,
-                secret: configService.get<string>('JWT_SECRET'),
-                signOptions: {
-                    expiresIn: configService.get<string>('JWT_EXPIRATION'),
-                },
-            }),
-            inject: [ConfigService],
+        JwtModule.register({
+            global: true,
+            secret: process.env.JWT_SECRET,
+            signOptions: {
+                expiresIn: process.env.JWT_EXPIRATION,
+            },
         }),
     ],
     controllers: [AuthController],
