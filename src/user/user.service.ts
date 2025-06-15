@@ -45,4 +45,10 @@ export class UserService {
         await this.userRepository.createAndSave(user)
         return user
     }
+
+    async deleteUser(userId: number) {
+        const user = await this.userRepository.findById(userId)
+        if (!user) throw new BadRequestException('User not found')
+        await this.userRepository.removeUser(user)
+    }
 }

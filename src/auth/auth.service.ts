@@ -34,7 +34,11 @@ export class AuthService {
         if (!(await argon2.verify(user.password, pass)))
             throw new UnauthorizedException('Wrong password')
 
-        const payload = { email: user.email, sub: user.id }
+        const payload = {
+            email: user.email,
+            sub: user.id,
+            username: user.username,
+        }
 
         return this.jwtService.signAsync(payload)
     }
@@ -44,7 +48,10 @@ export class AuthService {
         if (existUser)
             throw new BadRequestException('This email already exists')
 
+        const username = userData.username || userData.email.split('@')[0]
+
         const newUser = await this.userRepository.createAndSave({
+            username,
             email: userData.email,
             password: await argon2.hash(userData.password),
         })
@@ -134,6 +141,10 @@ export class AuthService {
     }
 
     async validateUser(user: CreateGoogleUserInterface) {
+        if (!user.username) {
+            user.username = user.email.split('@')[0]
+        }
+
         const existUser = await this.userRepository.findByEmail(user.email)
         if (existUser) throw new BadRequestException('This email already exist')
 

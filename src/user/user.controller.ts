@@ -10,6 +10,7 @@ import {
     HttpStatus,
     ParseFilePipeBuilder,
     Get,
+    Delete,
 } from '@nestjs/common'
 import { AuthGuard } from '../auth/auth.guard'
 import { UpdateProfileDto } from './dto/update-profile.dto'
@@ -93,5 +94,14 @@ export class UserController {
         }
         const user = await this.userService.updateProfile(req.user.userId, dto)
         return { message: 'Profile updated', user }
+    }
+
+    @UseGuards(AuthGuard)
+    @ApiBearerAuth('access-token')
+    @ApiOAuth2(['bookly:write'])
+    @Delete('profile')
+    async deleteProfile(@Req() req: AuthenticatedRequest) {
+        await this.userService.deleteUser(req.user.userId)
+        return { message: 'User deleted' }
     }
 }
