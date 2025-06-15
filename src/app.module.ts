@@ -7,6 +7,7 @@ import { PassportModule } from '@nestjs/passport'
 import { UserService } from './user/user.service'
 import { MailerService } from './mailer/mailer.service'
 import { MailerModule } from './mailer/mailer.module'
+import { BookModule } from './book/book.module';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { MailerModule } from './mailer/mailer.module'
         AuthModule,
         UserModule,
         MailerModule,
+        BookModule,
     ],
     providers: [UserService, MailerService],
     exports: [UserService],

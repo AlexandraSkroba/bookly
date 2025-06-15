@@ -39,6 +39,8 @@ export class AuthController {
     // auth/signup
     @Post('signup')
     async signUp(@Body() createUserDto: CreateUserDto) {
+        createUserDto.username =
+            createUserDto.username || createUserDto.email.split('@')[0] // Set username to email prefix
         return {
             access_token: await this.authService.signUp(createUserDto),
         }

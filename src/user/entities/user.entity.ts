@@ -1,9 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { BookEntity } from 'src/book/entities/book.entity'
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('users')
 export class UserEntity {
+    @OneToMany(() => BookEntity, (book) => book.owner)
+    books: BookEntity[]
+
     @PrimaryGeneratedColumn()
     id: number
+
+    @Column({ type: 'varchar', length: 320 })
+    username: string
 
     @Column({ type: 'varchar', length: 320 })
     email: string

@@ -10,7 +10,7 @@ import { Request } from 'express'
 
 declare module 'express' {
     interface Request {
-        user?: {
+        user: {
             userId: string
             email: string
         }
