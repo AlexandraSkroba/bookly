@@ -12,10 +12,11 @@ export class CreateBookDto {
     @ApiProperty({ example: 'F. Scott Fitzgerald' })
     author: string
 
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty({ example: 'Classic' })
-    genre: string
+    @ApiProperty({
+        example: [1, 2],
+        description: 'Array of genre IDs',
+    })
+    genreIds: number[]
 
     @IsNotEmpty()
     @IsString()

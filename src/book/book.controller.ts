@@ -1,4 +1,15 @@
-import { Controller, Post, Body, UseGuards, Req, Get, UseInterceptors, UploadedFile } from '@nestjs/common'
+import {
+    Controller,
+    Post,
+    Body,
+    UseGuards,
+    Req,
+    Get,
+    UseInterceptors,
+    UploadedFile,
+    Query,
+    ParseArrayPipe,
+} from '@nestjs/common'
 import { Request } from 'express'
 import { BookService } from './book.service'
 import { CreateBookDto } from './dto/create-book.dto'
@@ -35,8 +46,11 @@ export class BookController {
     async addBook(
         @Req() req: Request & { user: { userId: number } },
         @Body() dto: CreateBookDto,
+        @Body('genreIds', new ParseArrayPipe({ items: Number, separator: ',' }))
+        genreIds: number[],
         @UploadedFile() cover?: Express.Multer.File,
     ) {
+        dto.genreIds = genreIds
         if (cover) {
             dto.cover = `/uploads/covers/${cover.filename}`
         }
@@ -48,5 +62,10 @@ export class BookController {
     @Get()
     async getCatalog() {
         return { books: await this.bookService.getCatalog() }
+    }
+
+    @Get('search')
+    async searchBooks(@Query('q') q: string) {
+        return this.bookService.searchBooks(q)
     }
 }

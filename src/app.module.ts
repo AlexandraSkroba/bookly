@@ -8,6 +8,7 @@ import { UserService } from './user/user.service'
 import { MailerService } from './mailer/mailer.service'
 import { MailerModule } from './mailer/mailer.module'
 import { BookModule } from './book/book.module';
+import { GenreModule } from './genre/genre.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { BookModule } from './book/book.module';
         UserModule,
         MailerModule,
         BookModule,
+        GenreModule,
     ],
     providers: [UserService, MailerService],
     exports: [UserService],

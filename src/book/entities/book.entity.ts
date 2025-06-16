@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinTable,
+    ManyToMany,
+} from 'typeorm'
 import { UserEntity } from 'src/user/entities/user.entity'
+import { GenreEntity } from 'src/genre/entities/genre.entity'
 
 @Entity('books')
 export class BookEntity {
@@ -12,8 +20,9 @@ export class BookEntity {
     @Column()
     author: string
 
-    @Column()
-    genre: string
+    @ManyToMany(() => GenreEntity, (genre) => genre.books, { eager: true })
+    @JoinTable()
+    genres: GenreEntity[]
 
     @Column()
     language: string

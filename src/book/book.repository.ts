@@ -23,6 +23,63 @@ export class BookRepository {
         return this.repo.findOne({ where: { id }, relations: ['owner'] })
     }
 
+    async searchBooks(keyword: string): Promise<BookEntity[]> {
+        if (!keyword) {
+            return this.repo.find({ relations: ['owner', 'genres'] })
+        }
+        return this.repo
+            .createQueryBuilder('book')
+            .leftJoinAndSelect('book.owner', 'owner')
+            .leftJoinAndSelect('book.genres', 'genre')
+            .where('book.title ILIKE :kw', { kw: `%${keyword}%` })
+            .orWhere('book.author ILIKE :kw', { kw: `%${keyword}%` })
+            .orWhere('book.language ILIKE :kw', { kw: `%${keyword}%` })
+            .orWhere('book.location ILIKE :kw', { kw: `%${keyword}%` })
+            .orWhere('genre.name ILIKE :kw', { kw: `%${keyword}%` })
+            .getMany()
+    }
+
+    async filterBooks(query: {
+        title?: string
+        author?: string
+        genre?: string
+        language?: string
+        location?: string
+    }): Promise<BookEntity[]> {
+        const qb = this.repo
+            .createQueryBuilder('book')
+            .leftJoinAndSelect('book.owner', 'owner')
+            .leftJoinAndSelect('book.genres', 'genre')
+
+        if (query.title) {
+            qb.andWhere('book.title ILIKE :title', {
+                title: `%${query.title}%`,
+            })
+        }
+        if (query.author) {
+            qb.andWhere('book.author ILIKE :author', {
+                author: `%${query.author}%`,
+            })
+        }
+        if (query.language) {
+            qb.andWhere('book.language ILIKE :language', {
+                language: `%${query.language}%`,
+            })
+        }
+        if (query.location) {
+            qb.andWhere('book.location ILIKE :location', {
+                location: `%${query.location}%`,
+            })
+        }
+        if (query.genre) {
+            qb.andWhere('genre.name ILIKE :genre', {
+                genre: `%${query.genre}%`,
+            })
+        }
+
+        return qb.getMany()
+    }
+
     async update(
         id: number,
         book: Partial<BookEntity>,
