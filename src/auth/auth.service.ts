@@ -54,6 +54,7 @@ export class AuthService {
             username,
             email: userData.email,
             password: await argon2.hash(userData.password),
+            city: '',
         })
 
         void this.sendEmailConfirmation(newUser.email)

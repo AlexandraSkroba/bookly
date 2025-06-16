@@ -15,6 +15,9 @@ export class UserEntity {
     @Column({ type: 'varchar', length: 320 })
     email: string
 
+    @Column({ type: 'varchar', length: 50 })
+    city: string
+
     @Column({ default: false })
     public isEmailConfirmed: boolean
 

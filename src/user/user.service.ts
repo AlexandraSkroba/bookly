@@ -31,6 +31,9 @@ export class UserService {
         const user = await this.userRepository.findById(userId)
         if (!user) throw new BadRequestException('User not found')
 
+        if (dto.username) {
+            user.username = dto.username
+        }
         if (dto.email && dto.email !== user.email) {
             user.email = dto.email
             user.isEmailConfirmed = false
@@ -42,6 +45,10 @@ export class UserService {
         if (dto.preferences) {
             user.preferences = dto.preferences
         }
+        if (dto.city) {
+            user.city = dto.city
+        }
+
         await this.userRepository.createAndSave(user)
         return user
     }
