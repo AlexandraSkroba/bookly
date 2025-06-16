@@ -42,7 +42,7 @@ export class AuthController {
         // createUserDto.username =
         //     createUserDto.username || createUserDto.email.split('@')[0] // Set username to email prefix
         return {
-            access_token: await this.authService.signUp(createUserDto),
+            message: await this.authService.signUp(createUserDto),
         }
     }
 
