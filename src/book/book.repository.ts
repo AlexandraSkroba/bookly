@@ -42,7 +42,7 @@ export class BookRepository {
     async filterBooks(query: {
         title?: string
         author?: string
-        genre?: string
+        genres?: string[]
         language?: string
         location?: string
     }): Promise<BookEntity[]> {
@@ -71,10 +71,8 @@ export class BookRepository {
                 location: `%${query.location}%`,
             })
         }
-        if (query.genre) {
-            qb.andWhere('genre.name ILIKE :genre', {
-                genre: `%${query.genre}%`,
-            })
+        if (query.genres && query.genres.length > 0) {
+            qb.andWhere('genre.name IN (:...genres)', { genres: query.genres })
         }
 
         return qb.getMany()

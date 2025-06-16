@@ -49,6 +49,16 @@ export class BookService {
         return { books }
     }
 
+    async filterBooks(query: {
+        title?: string
+        author?: string
+        genres?: string[]
+        language?: string
+        location?: string
+    }) {
+        return this.bookRepository.filterBooks(query)
+    }
+
     async deleteBook(id: number, userId: number) {
         const book = await this.getBookById(id)
         if (book.owner.id !== userId) {

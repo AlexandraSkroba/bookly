@@ -68,4 +68,34 @@ export class BookController {
     async searchBooks(@Query('q') q: string) {
         return this.bookService.searchBooks(q)
     }
+
+    @Get('filter')
+    async filterBooks(
+        @Query('title') title?: string,
+        @Query('author') author?: string,
+        @Query('genre') genre?: string | string[],
+        @Query('language') language?: string,
+        @Query('location') location?: string,
+    ) {
+        let genres: string[] | undefined
+        if (Array.isArray(genre)) {
+            genres = genre
+        } else if (typeof genre === 'string') {
+            genres = genre
+                .split(',')
+                .map((g) => g.trim())
+                .filter(Boolean)
+        }
+        const books = await this.bookService.filterBooks({
+            title,
+            author,
+            genres,
+            language,
+            location,
+        })
+        if (!books.length) {
+            return { message: 'No books found', books: [] }
+        }
+        return { books }
+    }
 }
