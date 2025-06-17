@@ -59,6 +59,31 @@ export class BookService {
         return this.bookRepository.filterBooks(query)
     }
 
+    async completeDescription(id: number): Promise<{ description: string }> {
+        const book = await this.getBookById(id)
+        if (!book) throw new BadRequestException('Book not found')
+        // Mock AI call with timeout
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        // In real implementation, call AI API here with book data
+        return {
+            description: `"The Great Gatsby" is a classic novel written by F. Scott Fitzgerald, set in the roaring twenties in the United States. The story is narrated by Nick Carraway, a Midwesterner who moves to Long Island's North Shore and becomes caught up in the tantalizing world of the wealthy.
+                At the center of this world is the mysterious and enigmatic Jay Gatsby, a millionaire known for his lavish parties, yet shrouded in mystery regarding his past. Gatsby, who dreams of reuniting with his former love, Daisy Buchanan, wife of the philandering Tom Buchanan, pursues Nick to help him win Daisy back.
+                As the story unfolds, the seemingly idyllic lives of Daisy, Tom, and Gatsby are exposed as shallow, morally bankrupt, and filled with deceit, disillusionment, and tragedy. The novel is a poignant commentary on the American Dream, the decadence and materialism of 1920s society, and the concept of illusion versus reality.
+                "The Great Gatsby" is a novel that continues to be widely read and studied for its exploration of the human condition, its rich prose, and its enduring themes of hope, disillusionment, and the pursuit of the elusive American Dream.`,
+        }
+    }
+
+    async completeGenres(id: number): Promise<{ genres: string[] }> {
+        const book = await this.getBookById(id)
+        if (!book) throw new BadRequestException('Book not found')
+        // Mock AI call with timeout
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        // In real implementation, call AI API here with book data
+        return {
+            genres: ['Tragedy'],
+        }
+    }
+
     async deleteBook(id: number, userId: number) {
         const book = await this.getBookById(id)
         if (book.owner.id !== userId) {

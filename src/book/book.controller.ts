@@ -16,7 +16,13 @@ import { Request } from 'express'
 import { BookService } from './book.service'
 import { CreateBookDto } from './dto/create-book.dto'
 import { AuthGuard } from 'src/auth/auth.guard'
-import { ApiBearerAuth, ApiConsumes, ApiOAuth2 } from '@nestjs/swagger'
+import {
+    ApiBearerAuth,
+    ApiConsumes,
+    ApiOAuth2,
+    ApiOkResponse,
+    ApiOperation,
+} from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { diskStorage } from 'multer'
 
@@ -134,5 +140,34 @@ export class BookController {
             return { message: 'No books found', books: [] }
         }
         return { books }
+    }
+
+    @Get(':id/complete-description')
+    @ApiOperation({ summary: 'Autocomplete book description using AI' })
+    @ApiOkResponse({
+        description: 'AI-generated description',
+        schema: {
+            example: {
+                description:
+                    'This is an AI-generated description for "Book Title" by Author.',
+            },
+        },
+    })
+    async completeDescription(@Param('id') id: number) {
+        return this.bookService.completeDescription(id)
+    }
+
+    @Get(':id/complete-genres')
+    @ApiOperation({ summary: 'Autocomplete book genres using AI' })
+    @ApiOkResponse({
+        description: 'AI-generated genres',
+        schema: {
+            example: {
+                genres: ['Romance', 'Adventure'],
+            },
+        },
+    })
+    async completeGenres(@Param('id') id: number) {
+        return this.bookService.completeGenres(id)
     }
 }
