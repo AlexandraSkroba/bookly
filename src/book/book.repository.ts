@@ -16,11 +16,14 @@ export class BookRepository {
     }
 
     async findAll(): Promise<BookEntity[]> {
-        return this.repo.find({ relations: ['owner'] })
+        return this.repo.find({ relations: ['owner', 'genres'] })
     }
 
     async findById(id: number): Promise<BookEntity | null> {
-        return this.repo.findOne({ where: { id }, relations: ['owner'] })
+        return this.repo.findOne({
+            where: { id },
+            relations: ['owner', 'genres'],
+        })
     }
 
     async searchBooks(keyword: string): Promise<BookEntity[]> {

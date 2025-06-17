@@ -20,6 +20,9 @@ export class BookEntity {
     @Column()
     author: string
 
+    @Column({ nullable: true })
+    description?: string
+
     @ManyToMany(() => GenreEntity, (genre) => genre.books, { eager: true })
     @JoinTable()
     genres: GenreEntity[]

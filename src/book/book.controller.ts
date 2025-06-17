@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
     Controller,
     Post,
@@ -9,6 +10,7 @@ import {
     UploadedFile,
     Query,
     ParseArrayPipe,
+    Param,
 } from '@nestjs/common'
 import { Request } from 'express'
 import { BookService } from './book.service'
@@ -62,6 +64,41 @@ export class BookController {
     @Get()
     async getCatalog() {
         return { books: await this.bookService.getCatalog() }
+    }
+
+    @Get(':id')
+    async getBookDetails(@Param('id') id: number) {
+        const book = await this.bookService.getBookById(id)
+        if (!book) {
+            return { message: 'Book not found' }
+        }
+        // Optionally, filter out sensitive owner fields
+        const {
+            password,
+            passwordRecoveryToken,
+            passwordRecoveryTokenExpires,
+            ...owner
+        } = book.owner || {}
+        return {
+            id: book.id,
+            title: book.title,
+            author: book.author,
+            genres: book.genres?.map((g) => g.name),
+            language: book.language,
+            condition: book.condition,
+            location: book.location,
+            description: book.description,
+            cover: book.cover,
+            owner: owner
+                ? {
+                      id: owner.id,
+                      username: owner.username,
+                      email: owner.email,
+                      city: owner.city,
+                      avatar: owner.avatar,
+                  }
+                : null,
+        }
     }
 
     @Get('search')
