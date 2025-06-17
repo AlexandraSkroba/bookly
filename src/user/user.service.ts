@@ -8,6 +8,7 @@ import { UserRepository } from './user.repository'
 import { AUTH_SERVICE, USER_REPOSITORY } from 'src/constants'
 import { UpdateProfileDto } from './dto/update-profile.dto'
 import { AuthService } from 'src/auth/auth.service'
+import { GenreRepository } from 'src/genre/genre.repository'
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,7 @@ export class UserService {
         @Inject(USER_REPOSITORY) private userRepository: UserRepository,
         @Inject(forwardRef(() => AUTH_SERVICE))
         private authService: AuthService, // resolve circular dependencies using forwardRef
+        private readonly genreRepository: GenreRepository,
     ) {}
 
     async findById(userId: number) {
@@ -42,8 +44,11 @@ export class UserService {
         if (dto.avatar) {
             user.avatar = dto.avatar
         }
-        if (dto.preferences) {
-            user.preferences = dto.preferences
+        if (dto.preferenceGenreIds) {
+            const genres = await this.genreRepository.findByIds(
+                dto.preferenceGenreIds,
+            )
+            user.preferences = genres
         }
         if (dto.city) {
             user.city = dto.city

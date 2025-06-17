@@ -11,6 +11,7 @@ import {
     ParseFilePipeBuilder,
     Get,
     Delete,
+    ParseArrayPipe,
 } from '@nestjs/common'
 import { AuthGuard } from '../auth/auth.guard'
 import { UpdateProfileDto } from './dto/update-profile.dto'
@@ -73,7 +74,11 @@ export class UserController {
     async updateProfile(
         @Req() req: AuthenticatedRequest,
         @Body() dto: UpdateProfileDto,
-
+        @Body(
+            'preferenceGenreIds',
+            new ParseArrayPipe({ items: Number, separator: ',' }),
+        )
+        preferenceGenreIds: number[],
         @UploadedFile(
             new ParseFilePipeBuilder()
                 .addFileTypeValidator({
@@ -89,6 +94,7 @@ export class UserController {
         )
         avatar?: Express.Multer.File,
     ) {
+        dto.preferenceGenreIds = preferenceGenreIds
         if (avatar) {
             dto.avatar = `/uploads/avatars/${avatar.filename}`
         }

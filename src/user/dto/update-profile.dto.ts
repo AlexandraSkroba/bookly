@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, IsArray } from 'class-validator'
+import { IsEmail, IsOptional, IsString } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateProfileDto {
@@ -17,15 +17,13 @@ export class UpdateProfileDto {
     })
     @IsOptional()
     avatar?: any
+
     @ApiPropertyOptional({
-        type: [String],
-        description: 'User preferences (genres, authors, etc.)',
-        example: ['fiction', 'fantasy'],
+        type: [Number],
+        description: 'Array of preferred genre IDs',
+        example: [1, 2],
     })
-    @IsOptional()
-    @IsArray()
-    @IsString({ each: true })
-    preferences?: string[]
+    preferenceGenreIds?: number[]
 
     @ApiPropertyOptional({
         type: 'string',
