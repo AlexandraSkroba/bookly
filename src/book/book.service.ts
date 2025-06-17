@@ -84,6 +84,16 @@ export class BookService {
         }
     }
 
+    async recommendBooks(): Promise<{ books: any[] }> {
+        // Simulate AI delay
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        // Get 5 random books (or first 5 if you want it simple)
+        const allBooks = await this.bookRepository.findAll()
+        // Shuffle and pick 5, or just slice first 5
+        const books = allBooks./*sort(() => 0.5 - Math.random()).*/ slice(0, 5)
+        return { books }
+    }
+
     async deleteBook(id: number, userId: number) {
         const book = await this.getBookById(id)
         if (book.owner.id !== userId) {

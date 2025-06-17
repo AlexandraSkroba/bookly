@@ -170,4 +170,21 @@ export class BookController {
     async completeGenres(@Param('id') id: number) {
         return this.bookService.completeGenres(id)
     }
+
+    @Get('recommend')
+    @ApiOperation({ summary: 'Get AI-powered book recommendations (mocked)' })
+    @ApiOkResponse({
+        description: 'Five recommended books',
+        schema: {
+            example: {
+                books: [
+                    { id: 1, title: 'Book 1', author: 'Author 1' /* ... */ },
+                    // ...
+                ],
+            },
+        },
+    })
+    async recommendBooks() {
+        return this.bookService.recommendBooks()
+    }
 }
